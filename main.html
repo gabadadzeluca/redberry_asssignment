@@ -3,25 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
-    
+
     <link rel="stylesheet" href="./style/style.css">
     <title>RedBerry Assignment</title>
 </head>
 <body>
 <div class="wrapper">
-    <div class="main-page">
+    <div class="left-side-container">
+        <!-- this div is a container of the whole left side of the page-->
         <div class="form-conatiner">
             <div class="reset-btn"></div>
 
-            <div class="form-private"></div>
+            <div class="form-private">
+                <h2 class="heading">პირადი ინფო</h2>
+                <form>
+                    <div class="name-surname">
+                        <div class="name-div">
+                            <label for="name">სახელი</label>
+                            <input type="text" placeholder="სახელი" id="name">
+                        </div>
+                        <div class="surname-div">
+                            <label for="surname">გვარი</label>
+                            <input type="text" placeholder="გვარი" id="surname">
+                        </div>
+                    </div>
+                    <div class="image-upload">
+                        პირადი ფოტოს ატვირთვა
+                        <label for="user-image">
+                            <input type="file" id="user-image" style="display:none">
+                            ატვირთვა
+                        </label>
+                    </div>
+                    <div class="about">
+                        <label for="about-user"></label>
+                        <input type="textarea" placeholder="ზოგადი ინფო შენ შესახებ" id="about-user">
+                    </div>
+                    <div>
+                        <label for="email">ელ-ფოსტა</label>
+                        <input type="email" placeholder="anzor666redberry.ge" id="email">
+                        <p>უნდა მთავრდებოდეს @redberry.ge-ით</p>
+                    </div>
+                    <div>
+                        <label for="mobile"></label>
+                        <input type="number" placeholder="+995 551 12 34 56">
+                        <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
+                    </div>
+
+                </form>
+            </div>
+            
             <div class="form-experience"></div>
             <div class="form-education"></div>
         </div>
-        <div class="resume-active">
-
+        <div class="nav-buttons-div">
+            <button class="previous-btn">უკან</button>
+            <button class="next-btn">შემდეგი</button>
         </div>
+    
     </div>
+
+    <div class="resume-active"></div>
+
 </div>
 
+<script src="./js/main.js"></script>
 </body>
 </html>
