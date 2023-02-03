@@ -1,0 +1,80 @@
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("../assets/HelveticaNeue.ttc") format("truetype");
+}
+:root {
+  --off-black: #1A1A1A;
+  --medium: 500;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Helvetica Neue", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+body * {
+  background-repeat: no-repeat;
+  background-position: center;
+  font-weight: var(--medium);
+}
+
+button {
+  color: white;
+  padding: 1.8rem 6rem;
+  font-size: 2rem;
+  border-radius: 0.4rem;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.starting-screen {
+  background-image: url("../assets/images/background.png");
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
+}
+.starting-screen .heading {
+  display: inline-flex;
+  width: 90%;
+  border-bottom: 0.1rem solid var(--off-black);
+}
+.starting-screen .logo {
+  padding: 2.5rem 0;
+  background-image: url("../assets/images/redberrylogo.png");
+  min-width: 23.6rem;
+  min-height: 3.8rem;
+}
+.starting-screen .add-resume-div {
+  min-width: 46rem;
+  min-height: 30rem;
+  position: relative;
+  top: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.starting-screen .stamp {
+  position: absolute;
+  left: 70%;
+  top: 30%;
+}
+.starting-screen button {
+  width: 100%;
+  background-color: var(--off-black);
+  font-family: "Helvetica Neue", sans-serif;
+  border-radius: 0.8rem;
+}/*# sourceMappingURL=style.css.map */
