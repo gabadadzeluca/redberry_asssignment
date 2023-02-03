@@ -20,6 +20,18 @@
         </div>
     </div>
 </div>
-<script src="./js/main.js"></script>
+<script>
+    const startBtn = document.getElementById('start-btn');
+    const startingScreen = document.querySelector('.starting-screen');
+
+
+    startBtn.addEventListener('click', loadPage);
+
+    function loadPage(){
+        console.log('load');
+        // display the first page
+        location.href = './main.html'
+    }
+</script>
 </body>
 </html>
