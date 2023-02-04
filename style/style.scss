@@ -5,6 +5,18 @@
 :root{
     --off-black: #1A1A1A;
     --medium: 500;
+    --thin: 400;
+    --bold: 700;
+    --blue: #0E80BF;
+    --purple: #6B40E3;
+    --light-gray: #F9F9F9;
+    --gray-border: #BCBCBC;
+    --black:#000000;
+}
+
+.wrapper{
+    width: 100vw;
+    height: 100vh;
 }
 
 html{
@@ -18,8 +30,10 @@ body{
     align-items: center;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
     *{
+        box-sizing: border-box;
         background-repeat: no-repeat;
         background-position: center;
         font-weight: var(--medium);
@@ -29,13 +43,20 @@ body{
 button{
     color: white;
     padding: 1.8rem 6rem;
-    font-size: 2rem;
+    font-size: 1.4rem;
     border-radius: 0.4rem;
     font-family: 'Helvetica Neue', sans-serif;
+    border: none;
 }   
 button:hover{
     cursor: pointer;
 }
+.heading{
+    display: inline-flex;
+    width: 90%;
+    border-bottom: 0.1rem solid var(--off-black);
+}
+
 .starting-screen{
     background-image: url("../assets/images/background.png");
     display: flex;
@@ -44,11 +65,6 @@ button:hover{
     width: 100vw;
     height: 100vh;
     background-size: cover;
-    .heading{
-        display: inline-flex;
-        width: 90%;
-        border-bottom: 0.1rem solid var(--off-black);
-    }
     .logo{
         padding: 2.5rem 0;
         background-image: url("../assets/images/redberrylogo.png");
@@ -71,9 +87,113 @@ button:hover{
     }
     button{
         width: 100%;
+        font-size: 2rem;
         background-color: var(--off-black);
         font-family: 'Helvetica Neue', sans-serif;
         border-radius: 0.8rem;
     }
     
+}
+
+
+
+.left-side-container{
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--light-gray);
+    color:var(--black);
+
+    h2{
+        font-weight: var(--bold);
+        font-size: 2.4rem;
+    }
+    .reset-btn{
+        width: 4rem;
+        height: 4rem;
+        background-color: white;
+        border-radius: 50%;
+        background-image: url("../assets/images/arrow-left.png");
+    }
+
+    .form-container{
+        width: 90%;
+        height: 90%;
+        display: flex;
+        justify-content: center;
+    }
+    label[for="user-image"]{
+        font-weight: var(--thin);
+        padding: 0.4rem 1.9rem;
+        cursor: pointer;
+        display: inline-block;
+        background-color: var(--blue);
+        color: #fff;
+        border-radius: 0.4rem;
+        border: none;
+    }
+
+    label{
+        font-size: 1.6rem;
+        font-weight: var(--bold);
+    }
+    input, textarea{
+        border: 0.1rem solid var(--gray-border);
+        border-radius: 0.4rem;
+        padding: 1.3rem 1.6rem;
+        margin-top: 0.8rem;
+        width: 100%;
+    }
+    textarea{
+        resize: none;
+        min-height: 10rem;
+    }
+
+    .nav-buttons-div{
+        margin-top: 1rem;
+        width: 90%;
+        display: inline-flex;
+        justify-content: space-between;
+        button{
+            font-size: 1.4rem;
+            padding: 1.4rem 3.5rem;
+            background-color: var(--purple);
+        }
+    }
+    .row{
+        margin: 2rem 0;
+    }
+
+
+    .form-private{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .name-surname-div{
+            width: 100%;
+            display: inline-flex;
+            justify-content: space-between;
+            &>div{
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                input{
+                    width: 80%;
+                }
+            }
+        }
+        .image-upload-div{
+            display: inline-flex;
+            width: 45%;
+            justify-content: space-between;
+            align-items: center;
+            p{
+                font-size: 1.8rem;
+                font-weight: var(--bold);
+            }
+        }
+    }
 }
