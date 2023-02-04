@@ -11,41 +11,44 @@
 <div class="wrapper">
     <div class="left-side-container">
         <!-- this div is a container of the whole left side of the page-->
-        <div class="form-conatiner">
+        <div class="form-container">
             <div class="reset-btn"></div>
 
             <div class="form-private">
-                <h2 class="heading">პირადი ინფო</h2>
+                <div class="heading">
+                    <h2>პირადი ინფო</h2>
+                </div>
                 <form>
-                    <div class="name-surname">
+                    <div class="name-surname-div row">
                         <div class="name-div">
                             <label for="name">სახელი</label>
-                            <input type="text" placeholder="სახელი" id="name">
+                            <input type="text" placeholder="სახელი" id="name" data-mandatory="true">
                         </div>
                         <div class="surname-div">
                             <label for="surname">გვარი</label>
-                            <input type="text" placeholder="გვარი" id="surname">
+                            <input type="text" placeholder="გვარი" id="surname" data-mandatory="true">
                         </div>
                     </div>
-                    <div class="image-upload">
-                        პირადი ფოტოს ატვირთვა
+                    <div class="image-upload-div row">
+                        <p>პირადი ფოტოს ატვირთვა</p>
                         <label for="user-image">
-                            <input type="file" id="user-image" style="display:none">
+                            <input type="file" id="user-image" style="display:none" data-mandatory="true">
                             ატვირთვა
                         </label>
                     </div>
-                    <div class="about">
+                    <div class="about-div row">
                         <label for="about-user"></label>
-                        <input type="textarea" placeholder="ზოგადი ინფო შენ შესახებ" id="about-user">
+                        <!-- <input type="textarea" placeholder="ზოგადი ინფო შენ შესახებ" id="about-user" data-mandatory="false"> -->
+                        <textarea id="about-user" placeholder="ზოგადი ინფო შენ შესახებ"></textarea>
                     </div>
-                    <div>
+                    <div class="email-div row">
                         <label for="email">ელ-ფოსტა</label>
-                        <input type="email" placeholder="anzor666redberry.ge" id="email">
+                        <input type="email" placeholder="anzor666redberry.ge" id="email" data-mandatory="true">
                         <p>უნდა მთავრდებოდეს @redberry.ge-ით</p>
                     </div>
-                    <div>
-                        <label for="mobile"></label>
-                        <input type="number" placeholder="+995 551 12 34 56">
+                    <div class="number-div row">
+                        <label for="mobile">მობილურის ნომერი</label>
+                        <input type="number" placeholder="+995 551 12 34 56" data-mandatory="true">
                         <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
                     </div>
 
