@@ -12,34 +12,36 @@
     <div class="left-side-container">
         <!-- this div is a container of the whole left side of the page-->
         <div class="form-container">
-            <div class="reset-btn"></div>
+            <div class="reset-btn" id="reset-btn"></div>
 
             <div class="form-private">
                 <div class="heading">
                     <h2>პირადი ინფო</h2>
+                    <p><span id="form-number">1</span>/3</p>
                 </div>
                 <form>
                     <div class="name-surname-div row">
                         <div class="name-div">
                             <label for="name">სახელი</label>
                             <input type="text" placeholder="სახელი" id="name" data-mandatory="true">
+                            <p>მინიმუმ 2 ასო, ქართული ასოები</p>
                         </div>
                         <div class="surname-div">
                             <label for="surname">გვარი</label>
                             <input type="text" placeholder="გვარი" id="surname" data-mandatory="true">
+                            <p>მინიმუმ 2 ასო, ქართული ასოები</p>
                         </div>
                     </div>
                     <div class="image-upload-div row">
-                        <p>პირადი ფოტოს ატვირთვა</p>
+                        <div>პირადი ფოტოს ატვირთვა</div>
                         <label for="user-image">
                             <input type="file" id="user-image" style="display:none" data-mandatory="true">
                             ატვირთვა
                         </label>
                     </div>
                     <div class="about-div row">
-                        <label for="about-user"></label>
-                        <!-- <input type="textarea" placeholder="ზოგადი ინფო შენ შესახებ" id="about-user" data-mandatory="false"> -->
-                        <textarea id="about-user" placeholder="ზოგადი ინფო შენ შესახებ"></textarea>
+                        <label for="about-user">ჩემ შესახებ(არასავალდებულო)</label>
+                        <textarea id="about-user" placeholder="ზოგადი ინფო შენ შესახებ" data-mandatory="false"></textarea>
                     </div>
                     <div class="email-div row">
                         <label for="email">ელ-ფოსტა</label>
@@ -65,10 +67,16 @@
     
     </div>
 
-    <div class="resume-active"></div>
+    <div class="resume-active">
+    </div>
 
 </div>
-
+<script>
+    const resetBtn = document.getElementById('reset-btn');
+    resetBtn.addEventListener('click', ()=>{
+        location.href = './index.html';
+    });
+</script>
 <script src="./js/main.js"></script>
 </body>
 </html>
