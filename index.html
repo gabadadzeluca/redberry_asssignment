@@ -23,15 +23,10 @@
 <script>
     const startBtn = document.getElementById('start-btn');
     const startingScreen = document.querySelector('.starting-screen');
-
-
-    startBtn.addEventListener('click', loadPage);
-
-    function loadPage(){
-        console.log('load');
+    startBtn.addEventListener('click',()=>{
         // display the first page
         location.href = './main.html'
-    }
+    }); 
 </script>
 </body>
 </html>
