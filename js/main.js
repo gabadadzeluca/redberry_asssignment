@@ -6,26 +6,55 @@ const patterEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
 const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/;
 
 const formPrivate = document.querySelector('.form-private');
-const textInputs = document.querySelectorAll('input[type="text"]');
-const emailInput = document.getElementById('email');
-const numberInput = document.getElementById('mobile');
+// const textInputs = document.querySelectorAll('input[type="text"]');
+// const emailInput = document.getElementById('email');
+// const numberInput = document.getElementById('mobile');
 
 formPrivate.addEventListener('input', function(event){
-    textInputs.forEach(input=>{
-        checkTextValidity(input);
+    
+
+    formPrivate.querySelectorAll('input').forEach(input=>{
+        if(input.type == 'text'){
+            checkTextValidity(input);
+        }else if(input.type == 'tel'){
+            checkNumberValidity(input);
+        }else if(input.type == 'email'){
+            checkEmailValidity(input);
+        }else if(input.type == 'file'){
+            console.log(input.name);
+            const file = input.files[0];
+            if(file){
+                const reader = new FileReader();
+                reader.addEventListener('load', ()=>{
+                    const imageData = {
+                        image: reader.result
+                    };
+                    localStorage.setItem('imageData', JSON.stringify(imageData));
+                });
+                reader.readAsDataURL(file);
+            }
+        }
     });
-    checkEmailValidity(emailInput);
-    checkNumberValidity(numberInput);
 });
 
+// test
+document.getElementById('test').src = JSON.parse(localStorage.getItem('imageData')).image;
+document.getElementById('test').style.width = '10rem';
 
+
+//display input
+// function displayUserInput(){
+//     let data = JSON.parse(localStorage.getItem('form-one-data'));
+//     formPrivate.querySelectorAll('input').forEach(input=>{
+//         formPrivate.querySelector(`#${input.id}`).innerText = data[input.id];
+//     });
+// }
 
 
 function checkTextValidity(input){
     if (! patternGeo.test(input.value) || input.value.length < 2) {
         displayInvalidInput(input);
         showError(input);
-        return false;
     }else{
         displayValidInput(input);
         hideError(input);
@@ -40,6 +69,7 @@ function checkEmailValidity(input){
     }else{
         displayValidInput(input);
         hideError(input);
+        return true;
     }
 }
 
@@ -50,6 +80,7 @@ function checkNumberValidity(input){
     }else{
         displayValidInput(input);
         hideError(input);
+        return true;
     }
 }
 
@@ -62,9 +93,8 @@ function hideError(input){
     const parent = input.parentElement;
     parent.querySelector('p').style.display = 'none';
 }
-  
 
-  function displayInvalidInput(input){
+function displayInvalidInput(input){
     input.classList.forEach(className=>{
         input.classList.remove(className);
     });
@@ -76,13 +106,3 @@ function displayValidInput(input){
     });
     input.classList.add('valid')
 }
-
-// image upload
-const inputFile = document.querySelector('#user-image');
-inputFile.addEventListener('change', function(event) {
-  const reader = new FileReader();
-    // reader.onload = function() { // upload img
-        // previewImage.src = reader.result
-    // }
-    reader.readAsDataURL(event.target.files[0]);
-});
