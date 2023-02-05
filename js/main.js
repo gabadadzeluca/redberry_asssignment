@@ -20,14 +20,13 @@ formPrivate.addEventListener('input', function(event){
         }else if(input.type == 'email'){
             checkEmailValidity(input);
         }else if(input.type == 'file'){
-            console.log(input.name);
             const file = input.files[0];
             if(file) saveImage(file);
         }
     });
 });
 
-// // test
+// test
 document.getElementById('test').src = JSON.parse(localStorage.getItem('imageData')).image;
 document.getElementById('test').style.width = '10rem';
 
@@ -38,7 +37,13 @@ function saveImage(file){
         const imageData = {
             image: reader.result
         };
-        localStorage.setItem('imageData', JSON.stringify(imageData));
+        try{
+            hideError(document.querySelector('label[for="user-image"]'))
+            localStorage.setItem('imageData', JSON.stringify(imageData));
+        }catch(err){
+            console.log('image too large');
+            showError(document.querySelector('label[for="user-image"]'));
+        }
     });
     reader.readAsDataURL(file);
 }
@@ -50,7 +55,6 @@ function saveImage(file){
 //         formPrivate.querySelector(`#${input.id}`).innerText = data[input.id];
 //     });
 // }
-
 
 function checkTextValidity(input){
     if (! patternGeo.test(input.value) || input.value.length < 2) {
