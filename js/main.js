@@ -12,7 +12,6 @@ const formPrivate = document.querySelector('.form-private');
 
 formPrivate.addEventListener('input', function(event){
     
-
     formPrivate.querySelectorAll('input').forEach(input=>{
         if(input.type == 'text'){
             checkTextValidity(input);
@@ -23,24 +22,26 @@ formPrivate.addEventListener('input', function(event){
         }else if(input.type == 'file'){
             console.log(input.name);
             const file = input.files[0];
-            if(file){
-                const reader = new FileReader();
-                reader.addEventListener('load', ()=>{
-                    const imageData = {
-                        image: reader.result
-                    };
-                    localStorage.setItem('imageData', JSON.stringify(imageData));
-                });
-                reader.readAsDataURL(file);
-            }
+            if(file) saveImage(file);
         }
     });
 });
 
-// test
+// // test
 document.getElementById('test').src = JSON.parse(localStorage.getItem('imageData')).image;
 document.getElementById('test').style.width = '10rem';
 
+
+function saveImage(file){
+    const reader = new FileReader();
+    reader.addEventListener('load', ()=>{
+        const imageData = {
+            image: reader.result
+        };
+        localStorage.setItem('imageData', JSON.stringify(imageData));
+    });
+    reader.readAsDataURL(file);
+}
 
 //display input
 // function displayUserInput(){
