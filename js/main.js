@@ -37,12 +37,13 @@ function saveImage(file){
         const imageData = {
             image: reader.result
         };
+        const label = document.querySelector('label[for="user-image"]');
         try{
-            hideError(document.querySelector('label[for="user-image"]'))
+            hideError(label); //pass in label to use it as a child element
             localStorage.setItem('imageData', JSON.stringify(imageData));
         }catch(err){
             console.log('image too large');
-            showError(document.querySelector('label[for="user-image"]'));
+            showError(label);
         }
     });
     reader.readAsDataURL(file);
