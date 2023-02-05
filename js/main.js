@@ -10,10 +10,19 @@ const textInputs = document.querySelectorAll('input[type="text"]');
 const emailInput = document.getElementById('email');
 const numberInput = document.getElementById('mobile');
 
+const inputFields = Array.from(formPrivate.querySelectorAll('input')).filter(input=>input.type != 'file');
+
+
+
 formPrivate.addEventListener('input', function(event){
 
     const file = document.querySelector('input[type="file"]').files[0];
     if(file) saveImage(file);
+    // Array.every method is buggy
+    textInputs.forEach(input=>{
+        checkTextValidity(input);
+    });
+
     let textsValid = Array.from(textInputs).every(input=>{
         return checkTextValidity(input);
     });
@@ -22,8 +31,38 @@ formPrivate.addEventListener('input', function(event){
 
     if(emailValid && numberValid && textsValid && (file || localStorage.getItem('imageData'))){
         console.log('email, num, textInputs valid');
-    }else console.log('not valid');
+        nextBtn.addEventListener('click', nextForm);
+        prevBtn.addEventListener('click', prevForm);
+    }else{
+        console.log('invalid')
+        nextBtn.removeEventListener('click',nextForm);
+        prevBtn.removeEventListener('click',prevForm);
+    }
+    saveData();
 });
+
+function saveData(){
+    const formData = {};
+    // const inputFields = Array.from(formPrivate.querySelectorAll('input')).filter(input=>input.type != 'file');
+    inputFields.forEach(input => {
+        formData[input.id] = input.value;
+    });
+    localStorage.setItem('formData', JSON.stringify(formData));
+    console.log(formData);
+}
+displayData();
+
+// fill in input fields from local storage
+function displayData(){
+    const formData = JSON.parse(localStorage.getItem('formData'));
+    if(formData){
+        inputFields.forEach(input => {
+            console.log(formData[input.id]);
+            input.value = formData[input.id];
+            checkTextValidity(input); // !!! change line
+        });
+    } 
+}
 
 // test
 document.getElementById('test').src = JSON.parse(localStorage.getItem('imageData')).image;
@@ -48,13 +87,6 @@ function saveImage(file){
     reader.readAsDataURL(file);
 }
 
-//display input
-// function displayUserInput(){
-//     let data = JSON.parse(localStorage.getItem('form-one-data'));
-//     formPrivate.querySelectorAll('input').forEach(input=>{
-//         formPrivate.querySelector(`#${input.id}`).innerText = data[input.id];
-//     });
-// }
 
 function checkTextValidity(input){
     if (! patternGeo.test(input.value) || input.value.length < 2) {
