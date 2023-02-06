@@ -17,7 +17,7 @@
             <div class="form-private">
                 <div class="heading">
                     <h2>პირადი ინფო</h2>
-                    <p><span id="form-number">1</span>/3</p>
+                    <p><span>1</span>/3</p>
                 </div>
                 <form>
                     <div class="name-surname-div row">
@@ -46,18 +46,45 @@
                     <div class="email-div row">
                         <label for="email">ელ-ფოსტა</label>
                         <input type="email" placeholder="anzor666redberry.ge" id="email" data-mandatory="true">
-                        <p>უნდა მთავრდებოდეს @redberry.ge-ით</p>
                     </div>
                     <div class="number-div row">
                         <label for="mobile">მობილურის ნომერი</label>
-                        <input type="number" placeholder="+995 551 12 34 56" data-mandatory="true">
-                        <p>უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</p>
+                        <input type="tel" placeholder="+995 551 12 34 56" data-mandatory="true" id="mobile">
                     </div>
 
                 </form>
             </div>
             
-            <div class="form-experience"></div>
+            <div class="form-experience">
+                <div class="heading">
+                    <h2>გამოცდილება</h2>
+                    <p><span>2</span>/3</p>
+                </div>
+                <form>
+                    <div>
+                        <label for="position">თანამდებობა</label>
+                        <input type="text" name="position" id="position">
+                    </div>
+                    <div>
+                        <label for="employer">დამსაქმებელი</label>
+                        <input type="text" name="emloyer" id="employer">
+                    </div>
+                    <div class="work-date-div">
+                        <div>
+                            <label for="start-date">დაწყების რიცხვი</label>
+                            <input type="date" name="start-date" id="start-date">
+                        </div>
+                        <div>
+                            <label for="end-date">დაწყების რიცხვი</label>
+                            <input type="date" name="end-date" id="end-date">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="describtion">აღწერა</label>
+                        <textarea name="describtion" id="describtion" placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"></textarea>
+                    </div>
+                </form>
+            </div>
             <div class="form-education"></div>
         </div>
         <div class="nav-buttons-div">
@@ -68,6 +95,7 @@
     </div>
 
     <div class="resume-active">
+        <img id="test" alt="">
     </div>
 
 </div>
@@ -77,6 +105,6 @@
         location.href = './index.html';
     });
 </script>
-<script src="./js/main.js"></script>
+<script src="./js/main.js" type="module"></script>
 </body>
 </html>
