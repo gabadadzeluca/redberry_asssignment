@@ -1,4 +1,5 @@
 "use strict";
+import { textError, telError, textErrorName, emailError, fileError} from "./errors.js";
 
 let currentForm = 1;
 const patternGeo = /^[ა-ჰ]+$/;
@@ -33,6 +34,12 @@ function displayCurrentForm(currentForm){
         formEdu.style.display = 'flex';
     }
 }
+
+const allInputs = document.querySelectorAll('input');
+// add error messages to each input
+allInputs.forEach(input=>{
+    addErrorText(input);
+});
 
 
 formPrivate.addEventListener('input', function(event){
@@ -90,6 +97,23 @@ function displayData(){
             }
         });
     } 
+}
+
+
+function addErrorText(input, text){
+    if(input.type == 'text' && !(input.name == 'name' || input.name == 'surname')){
+        text = textError;
+    }else if( (input.name == 'name' || input.name == 'surname')) {
+            text = textErrorName;
+    }
+    else if(input.type == 'tel') text = telError;
+    else if(input.type == 'file') text = fileError;
+    else if(input.type == 'email') text = emailError;
+
+    const errorElement = document.createElement('p');
+    errorElement.innerText = text;
+    errorElement.className = 'error';
+    input.parentElement.appendChild(errorElement);
 }
 
 // test
@@ -151,12 +175,12 @@ function checkNumberValidity(input){
 
 function showError(input) {
     const parent = input.parentElement;
-    const error = parent.querySelector('p');
+    const error = parent.querySelector('.error');
     error.style.display = 'inline';
 }
 function hideError(input){
     const parent = input.parentElement;
-    parent.querySelector('p').style.display = 'none';
+    parent.querySelector('.error').style.display = 'none';
 }
 
 function displayInvalidInput(input){
@@ -192,3 +216,5 @@ function prevForm(){
     displayCurrentForm(currentForm);
 }
 
+
+displayCurrentForm(currentForm);
