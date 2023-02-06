@@ -81,7 +81,13 @@ function displayData(){
         inputFields.forEach(input => {
             console.log(formData[input.id]);
             input.value = formData[input.id];
-            checkTextValidity(input); // !!! change line
+            if(input.type == 'text'){
+                checkTextValidity(input);
+            }else if(input.type == 'tel'){
+                checkNumberValidity(input);
+            }else if(input.type == 'email'){
+                checkEmailValidity(input);
+            }
         });
     } 
 }
