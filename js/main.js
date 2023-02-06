@@ -12,6 +12,27 @@ const numberInput = document.getElementById('mobile');
 
 const inputFields = Array.from(formPrivate.querySelectorAll('input')).filter(input=>input.type != 'file');
 
+const formExperience = document.querySelector('.form-experience');
+const formEdu = document.querySelector('.form-education');
+function displayCurrentForm(currentForm){
+    if(currentForm == 1){
+        prevBtn.style.backgroundColor = 'var(--light-gray)';
+        prevBtn.style.cursor = 'auto';
+        formPrivate.style.display = 'flex';
+        formExperience.style.display = 'none';
+        formEdu.style.display = 'none';
+    }else if(currentForm == 2){
+        prevBtn.style.cursor = 'pointer';
+        prevBtn.style.backgroundColor = 'var(--purple)';
+        formPrivate.style.display = 'none';
+        formExperience.style.display = 'flex';
+        formEdu.style.display = 'none';
+    }else if(currentForm == 3){
+        formPrivate.style.display = 'none';
+        formExperience.style.display = 'none';
+        formEdu.style.display = 'flex';
+    }
+}
 
 
 formPrivate.addEventListener('input', function(event){
@@ -43,13 +64,14 @@ formPrivate.addEventListener('input', function(event){
 
 function saveData(){
     const formData = {};
-    // const inputFields = Array.from(formPrivate.querySelectorAll('input')).filter(input=>input.type != 'file');
     inputFields.forEach(input => {
         formData[input.id] = input.value;
     });
     localStorage.setItem('formData', JSON.stringify(formData));
     console.log(formData);
 }
+
+// display saved data
 displayData();
 
 // fill in input fields from local storage
@@ -152,8 +174,6 @@ prevBtn.addEventListener('click', prevForm);
 nextBtn.addEventListener('click', nextForm);
 
 function nextForm(){
-    // check if the input is valid
-    // then go to the next form
     if(currentForm == 3) return;
     currentForm++;
     console.log(currentForm);
@@ -166,24 +186,3 @@ function prevForm(){
     displayCurrentForm(currentForm);
 }
 
-const formExperience = document.querySelector('.form-experience');
-const formEdu = document.querySelector('.form-education');
-function displayCurrentForm(currentForm){
-    if(currentForm == 1){
-        prevBtn.style.backgroundColor = 'var(--light-gray)';
-        prevBtn.style.cursor = 'auto';
-        formPrivate.style.display = 'flex';
-        formExperience.style.display = 'none';
-        formEdu.style.display = 'none';
-    }else if(currentForm == 2){
-        prevBtn.style.cursor = 'pointer';
-        prevBtn.style.backgroundColor = 'var(--purple)';
-        formPrivate.style.display = 'none';
-        formExperience.style.display = 'flex';
-        formEdu.style.display = 'none';
-    }else if(currentForm == 3){
-        formPrivate.style.display = 'none';
-        formExperience.style.display = 'none';
-        formEdu.style.display = 'flex';
-    }
-}
