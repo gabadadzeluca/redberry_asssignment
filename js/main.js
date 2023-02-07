@@ -99,21 +99,19 @@ displayData();
 function displayData(){
     const formData = JSON.parse(localStorage.getItem('formData'));
     if(formData){
-        Array.from(formPrivate.querySelector('form').children).forEach(element=>{
-            inputFields.forEach(element => {
-                element.value = formData[element.id];
-                if(element.type == 'text'){
-                    checkTextValidity(element);
-                }else if(element.type == 'tel'){
-                    checkNumberValidity(element);
-                }else if(element.type == 'email'){
-                    checkEmailValidity(element);
-                }else if(input.type == 'date'){
-                    checkDateValidity(element);
-                }
-            });
+        inputFields.forEach(input => {
+            input.value = formData[input.id];
+            if(input.type == 'text'){
+                checkTextValidity(input);
+            }else if(input.type == 'tel'){
+                checkNumberValidity(input);
+            }else if(input.type == 'email'){
+                checkEmailValidity(input);
+            }else if(input.type == 'date'){
+                checkDateValidity(input);
+            }
         });
-    }
+    } 
 }
 
 
