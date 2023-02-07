@@ -2,12 +2,12 @@
 import { textError, telError, textErrorName, emailError, fileError} from "./errors.js";
 
 let currentForm = 1;
-const patternGeo = /^[ა-ჰ]+$/;
+const patternGeo = /^[ა-ჰ]+$/u;
 const patterEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
 const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/;
 
 const formPrivate = document.querySelector('.form-private');
-const textInputs = document.querySelectorAll('input[type="text"]');
+const textInputsformOne = document.querySelectorAll('.form-private input[type="text"]');
 const emailInput = document.getElementById('email');
 const numberInput = document.getElementById('mobile');
 
@@ -47,11 +47,12 @@ formPrivate.addEventListener('input', function(event){
     const file = document.querySelector('input[type="file"]').files[0];
     if(file) saveImage(file);
     // Array.every method is buggy
-    textInputs.forEach(input=>{
+    textInputsformOne.forEach(input=>{
         checkTextValidity(input);
     });
 
-    let textsValid = Array.from(textInputs).every(input=>{
+    let textsValid = Array.from(textInputsformOne).every(input=>{
+        console.log(input.id, checkTextValidity(input));
         return checkTextValidity(input);
     });
     let emailValid = checkEmailValidity(emailInput);
@@ -62,6 +63,11 @@ formPrivate.addEventListener('input', function(event){
         nextBtn.addEventListener('click', nextForm);
         prevBtn.addEventListener('click', prevForm);
     }else{
+        console.log(
+            'emaildata:', emailValid,
+            'number', numberValid,
+            'text:', textsValid,
+            )
         console.log('invalid')
         nextBtn.removeEventListener('click',nextForm);
         prevBtn.removeEventListener('click',prevForm);
@@ -69,13 +75,20 @@ formPrivate.addEventListener('input', function(event){
     saveData();
 });
 
+
+
+// formExperience.addEventListener('input', function(event){
+//     textInputs.forEach(input=>{
+//         checkTextValidity(input);
+//     });
+// });
+
 function saveData(){
     const formData = {};
     inputFields.forEach(input => {
         formData[input.id] = input.value;
     });
     localStorage.setItem('formData', JSON.stringify(formData));
-    console.log(formData);
 }
 
 // display saved data
@@ -94,6 +107,8 @@ function displayData(){
                 checkNumberValidity(input);
             }else if(input.type == 'email'){
                 checkEmailValidity(input);
+            }else if(input.type == 'date'){
+                checkDateValidity(input);
             }
         });
     } 
@@ -101,7 +116,7 @@ function displayData(){
 
 
 function addErrorText(input, text){
-    if(input.type == 'text' && !(input.name == 'name' || input.name == 'surname')){
+    if(input.name !== 'name' &&  input.name !== 'surname'){
         text = textError;
     }else if( (input.name == 'name' || input.name == 'surname')) {
             text = textErrorName;
@@ -144,12 +159,14 @@ function checkTextValidity(input){
     if (! patternGeo.test(input.value) || input.value.length < 2) {
         displayInvalidInput(input);
         showError(input);
+        return false;
     }else{
         displayValidInput(input);
         hideError(input);
         return true;
     }
 }
+
 
 function checkEmailValidity(input){
     if(!patterEmail.test(input.value)){
@@ -171,6 +188,9 @@ function checkNumberValidity(input){
         hideError(input);
         return true;
     }
+}
+function checkDateValidity(input){
+    if(input.value) return true;
 }
 
 function showError(input) {
