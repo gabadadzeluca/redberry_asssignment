@@ -7,9 +7,6 @@ const patterEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
 const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/;
 
 const formPrivate = document.querySelector('.form-private');
-const textInputsformOne = document.querySelectorAll('.form-private input[type="text"]');
-const emailInput = document.getElementById('email');
-const numberInput = document.getElementById('mobile');
 
 const inputFields = Array.from(formPrivate.querySelectorAll('input')).filter(input=>input.type != 'file');
 
@@ -43,10 +40,13 @@ allInputs.forEach(input=>{
 
 
 formPrivate.addEventListener('input', function(event){
+    const textInputsformOne = document.querySelectorAll('.form-private input[type="text"]');
+    const emailInput = document.getElementById('email');
+    const numberInput = document.getElementById('mobile');
 
     const file = document.querySelector('input[type="file"]').files[0];
     if(file) saveImage(file);
-    // Array.every method is buggy
+
     textInputsformOne.forEach(input=>{
         checkTextValidity(input);
     });
@@ -77,11 +77,30 @@ formPrivate.addEventListener('input', function(event){
 
 
 
-// formExperience.addEventListener('input', function(event){
-//     textInputs.forEach(input=>{
-//         checkTextValidity(input);
-//     });
-// });
+formExperience.addEventListener('input', function(event){
+    const textInputs = Array.from(formExperience.querySelectorAll('input[type="text"]'));
+    const dateInputs = Array.from(formExperience.querySelectorAll('input[type="date"]'));
+    const desc = formExperience.querySelector('#describtion');
+    textInputs.forEach(input=>{
+        checkTextValidity(input);
+    });
+    dateInputs.forEach(input=>{
+        checkDateValidity(input);
+    });
+    checkTextarea(desc);
+    
+
+    let textsValid = (textInputs).every(input=>{
+        return checkTextValidity(input);
+    });
+    let datesValid = (dateInputs).every(input=>{
+        return checkDateValidity(input);
+    });
+
+
+
+
+});
 
 function saveData(){
     const formData = {};
@@ -154,7 +173,6 @@ function saveImage(file){
     reader.readAsDataURL(file);
 }
 
-
 function checkTextValidity(input){
     if (! patternGeo.test(input.value) || input.value.length < 2) {
         displayInvalidInput(input);
@@ -165,7 +183,6 @@ function checkTextValidity(input){
         return true;
     }
 }
-
 
 function checkEmailValidity(input){
     if(!patterEmail.test(input.value)){
@@ -188,8 +205,28 @@ function checkNumberValidity(input){
         return true;
     }
 }
+
 function checkDateValidity(input){
-    if(input.value) return true;
+    if(input.value) {
+        return isValidDate(input.value);
+    }else{
+        return false;
+    }
+}
+
+function isValidDate(dateString) {
+    let date = new Date(dateString);
+    return !isNaN(date.getTime());
+}
+
+function checkTextarea(textarea){
+    if(textarea.value.length > 2){
+        textarea.classList.remove('invalid');
+        // textarea.classList.add('valid');
+        return true;
+    }else{
+        textarea.classList.add('invalid');
+    }
 }
 
 function showError(input) {
@@ -215,6 +252,15 @@ function displayValidInput(input){
     input.classList.add('valid')
 }
 
+
+// function for comparing dates
+function isFinishDateLater(startDate, finishDate) {
+    let start = new Date(startDate);
+    let finish = new Date(finishDate);
+    return !isNaN(start.getTime()) && !isNaN(finish.getTime()) && finish > start;
+}
+
+  
 
 const prevBtn = document.querySelector('.previous-btn');
 const nextBtn = document.querySelector('.next-btn');
