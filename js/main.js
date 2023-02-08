@@ -2,8 +2,7 @@
 import { textError, telError, textErrorName, emailError, fileError} from "./errors.js";
 import {getDegrees} from "./degrees.js";
 
-const degrees = await getDegrees();
-console.log(degrees);
+const degreesList = await getDegrees();
 let currentForm = 1;
 const patternGeo = /^[ა-ჰ]+$/u;
 const patterEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
@@ -78,8 +77,6 @@ formPrivate.addEventListener('input', function(event){
     saveData();
 });
 
-
-
 formExperience.addEventListener('input', function(event){
     const textInputs = Array.from(formExperience.querySelectorAll('input[type="text"]'));
     const dateInputs = Array.from(formExperience.querySelectorAll('input[type="date"]'));
@@ -135,6 +132,9 @@ function displayData(){
         });
     } 
 }
+//add options to a select element
+displayDegrees();
+
 
 
 function addErrorText(input, text){
@@ -227,7 +227,7 @@ function isValidDate(dateString) {
 function checkTextarea(textarea){
     if(textarea.value.length > 2){
         textarea.classList.remove('invalid');
-        // textarea.classList.add('valid');
+        textarea.classList.add('valid');
         return true;
     }else{
         textarea.classList.add('invalid');
@@ -265,7 +265,18 @@ function isFinishDateLater(startDate, finishDate) {
     return !isNaN(start.getTime()) && !isNaN(finish.getTime()) && finish > start;
 }
 
-  
+
+function displayDegrees(){
+    let degreeMenu = document.getElementById('degree-menu');
+    let options = '<option disabled selected>აირჩიეთ ხარისხი</option>';
+
+    degreesList.forEach(obj=>{
+        console.log(obj);
+        options +=  `<option value="${obj.title}" id=${obj.id}>${obj.title}</option>`;
+    });
+    degreeMenu.innerHTML = options;
+}
+
 
 const prevBtn = document.querySelector('.previous-btn');
 const nextBtn = document.querySelector('.next-btn');
