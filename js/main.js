@@ -1,6 +1,9 @@
 "use strict";
 import { textError, telError, textErrorName, emailError, fileError} from "./errors.js";
+import {getDegrees} from "./degrees.js";
 
+const degrees = await getDegrees();
+console.log(degrees);
 let currentForm = 1;
 const patternGeo = /^[ა-ჰ]+$/u;
 const patterEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
@@ -96,7 +99,7 @@ formExperience.addEventListener('input', function(event){
     let datesValid = (dateInputs).every(input=>{
         return checkDateValidity(input);
     });
-
+    saveData();// change this func
 
 
 
@@ -208,8 +211,10 @@ function checkNumberValidity(input){
 
 function checkDateValidity(input){
     if(input.value) {
+        input.classList.remove('invalid');
         return isValidDate(input.value);
     }else{
+        input.classList.add('invalid');
         return false;
     }
 }
