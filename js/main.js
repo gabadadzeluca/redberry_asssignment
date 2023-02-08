@@ -6,7 +6,7 @@ const degreesList = await getDegrees();
 let currentForm = 1;
 const patternGeo = /^[ა-ჰ]+$/u;
 const patterEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
-const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/;
+const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/; 
 
 const formPrivate = document.querySelector('.form-private');
 
@@ -45,7 +45,7 @@ formPrivate.addEventListener('input', function(event){
     const textInputsformOne = document.querySelectorAll('.form-private input[type="text"]');
     const emailInput = document.getElementById('email');
     const numberInput = document.getElementById('mobile');
-
+    let form = formPrivate.querySelector('form');
     const file = document.querySelector('input[type="file"]').files[0];
     if(file) saveImage(file);
 
@@ -60,27 +60,28 @@ formPrivate.addEventListener('input', function(event){
     let emailValid = checkEmailValidity(emailInput);
     let numberValid = checkNumberValidity(numberInput);
 
-    if(emailValid && numberValid && textsValid && (file || localStorage.getItem('imageData'))){
-        // console.log('email, num, textInputs valid');
-        nextBtn.addEventListener('click', nextForm);
-        prevBtn.addEventListener('click', prevForm);
-    }else{
-        console.log(
-            'emaildata:', emailValid,
-            'number', numberValid,
-            'text:', textsValid,
-            )
-        console.log('invalid')
-        nextBtn.removeEventListener('click',nextForm);
-        prevBtn.removeEventListener('click',prevForm);
-    }
-    saveData();
+    // if(emailValid && numberValid && textsValid && (file || localStorage.getItem('imageData'))){
+    //     // console.log('email, num, textInputs valid');
+    //     nextBtn.addEventListener('click', nextForm);
+    //     prevBtn.addEventListener('click', prevForm);
+    // }else{
+    //     console.log(
+    //         'emaildata:', emailValid,
+    //         'number', numberValid,
+    //         'text:', textsValid,
+    //         )
+    //     console.log('invalid')
+    //     nextBtn.removeEventListener('click',nextForm);
+    //     prevBtn.removeEventListener('click',prevForm);
+    // }
+    saveData(form);
 });
 
 formExperience.addEventListener('input', function(event){
     const textInputs = Array.from(formExperience.querySelectorAll('input[type="text"]'));
     const dateInputs = Array.from(formExperience.querySelectorAll('input[type="date"]'));
     const desc = formExperience.querySelector('#describtion');
+    const form = formExperience.querySelector('form');
     textInputs.forEach(input=>{
         checkTextValidity(input);
     });
@@ -96,19 +97,34 @@ formExperience.addEventListener('input', function(event){
     let datesValid = (dateInputs).every(input=>{
         return checkDateValidity(input);
     });
-    saveData();// change this func
-
-
-
+    saveData(form);
 });
 
-function saveData(){
+// function saveData(){
+//     const formData = {};
+//     inputFields.forEach(input => {
+//         formData[input.id] = input.value;
+//     });
+//     formData['about-user'] = document.getElementById('about-user').value;
+//     localStorage.setItem('formData', JSON.stringify(formData));
+// }
+// test
+function saveData(form){
     const formData = {};
-    inputFields.forEach(input => {
+    const formParent = form.parentElement;
+    Array.from(form.querySelectorAll('input')).forEach(input=>{
         formData[input.id] = input.value;
     });
-    formData['about-user'] = document.getElementById('about-user').value;
-    localStorage.setItem('formData', JSON.stringify(formData));
+
+    if(formParent.className == 'form-private'){
+        formData['about-user'] = form.querySelector('textArea').value;
+    }else if(formParent.className == 'form-experience'){
+        formData['describtion'] = form.querySelector('textarea').value;
+    }else{ // if education
+        formData['grad-describtion'] = form.querySelector('textarea').value;
+    }
+    
+    localStorage.setItem(`${form.id}Data`, JSON.stringify(formData));
 }
 
 // display saved data
@@ -154,9 +170,9 @@ function addErrorText(input, text){
 }
 
 // test
-document.getElementById('test').src = JSON.parse(localStorage.getItem('imageData')).image;
-document.getElementById('test').style.width = '30rem';
-document.getElementById('test').style.backgroundColor = 'blue';
+// document.getElementById('test').src = JSON.parse(localStorage.getItem('imageData')).image;
+// document.getElementById('test').style.width = '30rem';
+// document.getElementById('test').style.backgroundColor = 'blue';
 
 
 function saveImage(file){
@@ -297,5 +313,35 @@ function prevForm(){
     displayCurrentForm(currentForm);
 }
 
+const addExpBtn = document.getElementById('exp-btn');
+const addEduBtn = document.getElementById('edu-btn');
+
+addEduBtn.addEventListener('click', duplicateForm);
+addExpBtn.addEventListener('click', duplicateForm);
+
+if( !localStorage.getItem('fomrCount')) localStorage.setItem('formCount', 1);
+let formCount = 1 || localStorage.getItem('fomrCount');
+console.log(formCount);
+
+function duplicateForm(){
+    let form;
+    let container;
+    formCount++;
+    localStorage.setItem('formCount', formCount);
+    if(this.id == 'edu-btn'){
+        container = document.querySelector('.form-education');
+        form = container.querySelector('form');
+    }else{
+        container = document.querySelector('.form-experience');
+        form = container.querySelector('form');
+    }
+    const formCopy = form.cloneNode(true);
+    formCopy.id = formCount;
+    formCopy.querySelectorAll('[name]').forEach(element => {
+        element.name = `${element.name}${formCount}`;
+      });
+    container.append(formCopy);
+    console.log(form);
+}
 
 displayCurrentForm(currentForm);
