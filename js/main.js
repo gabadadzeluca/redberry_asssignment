@@ -1,5 +1,5 @@
 "use strict";
-import { textError, telError, textErrorName, emailError, fileError} from "./errors.js";
+import {textError, telError, textErrorName, emailError, fileError} from "./errors.js";
 import {getDegrees} from "./degrees.js";
 
 const degreesList = await getDegrees();
@@ -8,88 +8,66 @@ const patternGeo = /^[ა-ჰ]+$/u;
 const patterEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
 const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/; 
 
-const formPrivate = document.querySelector('.form-private');
+const formPrivateDiv = document.querySelector('.form-private');
 
-const inputFields = Array.from(formPrivate.querySelectorAll('input')).filter(input=>input.type != 'file');
-
-const formExperience = document.querySelector('.form-experience');
+const formExperienceDiv = document.querySelector('.form-experience');
 const formEdu = document.querySelector('.form-education');
 function displayCurrentForm(currentForm){
     if(currentForm == 1){
         prevBtn.style.backgroundColor = 'var(--light-gray)';
         prevBtn.style.cursor = 'auto';
-        formPrivate.style.display = 'flex';
-        formExperience.style.display = 'none';
+        formPrivateDiv.style.display = 'flex';
+        formExperienceDiv.style.display = 'none';
         formEdu.style.display = 'none';
     }else if(currentForm == 2){
         prevBtn.style.cursor = 'pointer';
         prevBtn.style.backgroundColor = 'var(--purple)';
-        formPrivate.style.display = 'none';
-        formExperience.style.display = 'flex';
+        formPrivateDiv.style.display = 'none';
+        formExperienceDiv.style.display = 'flex';
         formEdu.style.display = 'none';
     }else if(currentForm == 3){
-        formPrivate.style.display = 'none';
-        formExperience.style.display = 'none';
+        formPrivateDiv.style.display = 'none';
+        formExperienceDiv.style.display = 'none';
         formEdu.style.display = 'flex';
     }
 }
-
 const allInputs = document.querySelectorAll('input');
+const formPrivate = formPrivateDiv.querySelector('form');
+const formExp = formExperienceDiv.querySelector('form');
+
+[formPrivate, formExp].forEach(form=>{
+    form.addEventListener('input', ()=>{
+        handleForm(form);
+    });
+});
+
 // add error messages to each input
 allInputs.forEach(input=>{
     addErrorText(input);
 });
 
+function handleForm(form){
+    const numberInput = form.querySelector('input[type="tel"]');
+    const emailInput = form.querySelector('input[type="email"]'); 
+    const textInputs = Array.from(form.querySelectorAll('input[type="text"]'));
+    const dateInputs = Array.from(form.querySelectorAll('input[type="date"]'));
+    const textArea = form.querySelector('textarea');
+    const fileInput = form.querySelector('input[type="file"]');
+    if(fileInput) {
+        const file = fileInput.files[0];
+        if(file) saveImage(file);
+    }
+    if(emailInput && numberInput){
+        checkNumberValidity(numberInput);
+        checkEmailValidity(emailInput);
+    }
 
-formPrivate.addEventListener('input', function(event){
-    const textInputsformOne = document.querySelectorAll('.form-private input[type="text"]');
-    const emailInput = document.getElementById('email');
-    const numberInput = document.getElementById('mobile');
-    let form = formPrivate.querySelector('form');
-    const file = document.querySelector('input[type="file"]').files[0];
-    if(file) saveImage(file);
-
-    textInputsformOne.forEach(input=>{
-        checkTextValidity(input);
-    });
-
-    let textsValid = Array.from(textInputsformOne).every(input=>{
-        console.log(input.id, checkTextValidity(input));
-        return checkTextValidity(input);
-    });
-    let emailValid = checkEmailValidity(emailInput);
-    let numberValid = checkNumberValidity(numberInput);
-
-    // if(emailValid && numberValid && textsValid && (file || localStorage.getItem('imageData'))){
-    //     // console.log('email, num, textInputs valid');
-    //     nextBtn.addEventListener('click', nextForm);
-    //     prevBtn.addEventListener('click', prevForm);
-    // }else{
-    //     console.log(
-    //         'emaildata:', emailValid,
-    //         'number', numberValid,
-    //         'text:', textsValid,
-    //         )
-    //     console.log('invalid')
-    //     nextBtn.removeEventListener('click',nextForm);
-    //     prevBtn.removeEventListener('click',prevForm);
-    // }
-    saveData(form);
-});
-
-formExperience.addEventListener('input', function(event){
-    const textInputs = Array.from(formExperience.querySelectorAll('input[type="text"]'));
-    const dateInputs = Array.from(formExperience.querySelectorAll('input[type="date"]'));
-    const desc = formExperience.querySelector('#describtion');
-    const form = formExperience.querySelector('form');
     textInputs.forEach(input=>{
         checkTextValidity(input);
     });
     dateInputs.forEach(input=>{
         checkDateValidity(input);
     });
-    checkTextarea(desc);
-    
 
     let textsValid = (textInputs).every(input=>{
         return checkTextValidity(input);
@@ -97,23 +75,19 @@ formExperience.addEventListener('input', function(event){
     let datesValid = (dateInputs).every(input=>{
         return checkDateValidity(input);
     });
-    saveData(form);
-});
+    
+    if(textArea && textArea.dataset.mandatory == true){
+        checkTextarea(textArea);
+    }
 
-// function saveData(){
-//     const formData = {};
-//     inputFields.forEach(input => {
-//         formData[input.id] = input.value;
-//     });
-//     formData['about-user'] = document.getElementById('about-user').value;
-//     localStorage.setItem('formData', JSON.stringify(formData));
-// }
-// test
+    saveData(form);
+}
+
 function saveData(form){
     const formData = {};
     const formParent = form.parentElement;
     Array.from(form.querySelectorAll('input')).forEach(input=>{
-        formData[input.id] = input.value;
+        if(input.type !== 'file') formData[input.id] = input.value;
     });
 
     if(formParent.className == 'form-private'){
@@ -124,18 +98,20 @@ function saveData(form){
         formData['grad-describtion'] = form.querySelector('textarea').value;
     }
     
-    localStorage.setItem(`${form.id}Data`, JSON.stringify(formData));
+    localStorage.setItem(`${form.id}`, JSON.stringify(formData));
 }
 
-// display saved data
-displayData();
+// display saved data(first form)
+// displayData(formPrivateDiv.querySelector('form'));
+// displayData(formExperienceDiv.querySelector('form'));
 
-// fill in input fields from local storage
-function displayData(){
-    const formData = JSON.parse(localStorage.getItem('formData'));
+function displayData(form){ 
+    const inputFields = form.querySelectorAll('input');
+    const formData = JSON.parse(localStorage.getItem(`${form.id}`));
     if(formData){
         inputFields.forEach(input => {
-            input.value = formData[input.id];
+            if(input.type == 'file') return;
+            input.value = formData[input.name];
             if(input.type == 'text'){
                 checkTextValidity(input);
             }else if(input.type == 'tel'){
@@ -151,7 +127,14 @@ function displayData(){
 //add options to a select element
 displayDegrees();
 
-
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if(mutation.type === "childList") {
+            console.log('mutation')
+        }
+    });
+});
+observer.observe(document.querySelector('body'), {childList:true});
 
 function addErrorText(input, text){
     if(input.name !== 'name' &&  input.name !== 'surname'){
@@ -285,9 +268,7 @@ function isFinishDateLater(startDate, finishDate) {
 function displayDegrees(){
     let degreeMenu = document.getElementById('degree-menu');
     let options = '<option disabled selected>აირჩიეთ ხარისხი</option>';
-
     degreesList.forEach(obj=>{
-        console.log(obj);
         options +=  `<option value="${obj.title}" id=${obj.id}>${obj.title}</option>`;
     });
     degreeMenu.innerHTML = options;
@@ -336,12 +317,11 @@ function duplicateForm(){
         form = container.querySelector('form');
     }
     const formCopy = form.cloneNode(true);
-    formCopy.id = formCount;
+    formCopy.id = `${form.id}${formCount}`;
     formCopy.querySelectorAll('[name]').forEach(element => {
         element.name = `${element.name}${formCount}`;
       });
     container.append(formCopy);
-    console.log(form);
 }
 
 displayCurrentForm(currentForm);
