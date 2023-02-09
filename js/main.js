@@ -20,6 +20,7 @@ function displayCurrentForm(currentForm){
         formExperienceDiv.style.display = 'none';
         formEdu.style.display = 'none';
     }else if(currentForm == 2){
+        displayResume();
         prevBtn.style.cursor = 'pointer';
         prevBtn.style.backgroundColor = 'var(--purple)';
         formPrivateDiv.style.display = 'none';
@@ -77,6 +78,7 @@ function handleForm(form){
     });
     
     if(textArea && textArea.dataset.mandatory == true){
+        console.log('mandatory', textArea.dataset.mandatory);
         checkTextarea(textArea);
     }
 
@@ -102,8 +104,8 @@ function saveData(form){
 }
 
 // display saved data(first form)
-// displayData(formPrivateDiv.querySelector('form'));
-// displayData(formExperienceDiv.querySelector('form'));
+displayData(formPrivateDiv.querySelector('form'));
+displayData(formExperienceDiv.querySelector('form'));
 
 function displayData(form){ 
     const inputFields = form.querySelectorAll('input');
@@ -127,14 +129,14 @@ function displayData(form){
 //add options to a select element
 displayDegrees();
 
-const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-        if(mutation.type === "childList") {
-            console.log('mutation')
-        }
-    });
-});
-observer.observe(document.querySelector('body'), {childList:true});
+// const observer = new MutationObserver(function(mutations) {
+//     mutations.forEach(function(mutation) {
+//         if(mutation.type === "childList") {
+//             console.log('mutation')
+//         }
+//     });
+// });
+// observer.observe(document.querySelector('body'), {childList:true});
 
 function addErrorText(input, text){
     if(input.name !== 'name' &&  input.name !== 'surname'){
@@ -151,12 +153,6 @@ function addErrorText(input, text){
     errorElement.className = 'error';
     input.parentElement.appendChild(errorElement);
 }
-
-// test
-// document.getElementById('test').src = JSON.parse(localStorage.getItem('imageData')).image;
-// document.getElementById('test').style.width = '30rem';
-// document.getElementById('test').style.backgroundColor = 'blue';
-
 
 function saveImage(file){
     const reader = new FileReader();
@@ -211,6 +207,8 @@ function checkNumberValidity(input){
 function checkDateValidity(input){
     if(input.value) {
         input.classList.remove('invalid');
+        input.classList.add('valid');
+        // input.style.border = '1px solid var(--green)'
         return isValidDate(input.value);
     }else{
         input.classList.add('invalid');
@@ -300,28 +298,66 @@ const addEduBtn = document.getElementById('edu-btn');
 addEduBtn.addEventListener('click', duplicateForm);
 addExpBtn.addEventListener('click', duplicateForm);
 
-if( !localStorage.getItem('fomrCount')) localStorage.setItem('formCount', 1);
-let formCount = 1 || localStorage.getItem('fomrCount');
-console.log(formCount);
+if( !localStorage.getItem('fomrCountEdu')) localStorage.setItem('formCountEdu', 1);
+let formCountEdu = 1 || localStorage.getItem('fomrCountEdu');
+console.log('formcountEdu:',formCountEdu);
+
+if(!localStorage.getItem('formCountExp')) localStorage.setItem('formCountExp', 1);
+let formCountExp = localStorage.getItem('formCountExp');
 
 function duplicateForm(){
     let form;
     let container;
-    formCount++;
-    localStorage.setItem('formCount', formCount);
+    let formCount;
     if(this.id == 'edu-btn'){
         container = document.querySelector('.form-education');
         form = container.querySelector('form');
+        formCountEdu++;
+        localStorage.setItem('formCountEdu', formCountEdu);
+        formCount = formCountEdu;
     }else{
         container = document.querySelector('.form-experience');
         form = container.querySelector('form');
+        formCountExp++;
+        localStorage.setItem('formCountExp', formCountExp);
+        formCount = formCountExp;
     }
     const formCopy = form.cloneNode(true);
     formCopy.id = `${form.id}${formCount}`;
     formCopy.querySelectorAll('[name]').forEach(element => {
         element.name = `${element.name}${formCount}`;
+        element.value = '';
+        element.classList.forEach(className=>{
+            element.classList.remove(className);
+        });
       });
     container.append(formCopy);
+    formCopy.addEventListener('input', ()=>{
+        handleForm(formCopy);
+    });
 }
 
 displayCurrentForm(currentForm);
+
+
+
+function displayResume(){
+    const resumeContainer = document.querySelector('.resume-active');
+    displayUserInfo(resumeContainer);
+}
+
+function displayUserInfo(resumeContainer){
+    const image = resumeContainer.querySelector('img');
+    const nameDiv = resumeContainer.querySelector('.name');
+    const emailDiv = resumeContainer.querySelector('.email');
+    const aboutDiv = resumeContainer.querySelector('.about-user');
+    
+    let imageData = JSON.parse(localStorage.getItem('imageData'));
+    image.src =  imageData.image;
+
+    let {name, surname, email,tel} = JSON.parse(localStorage.getItem('formPrivate'));
+    let aboutUser = JSON.parse(localStorage.getItem('formPrivate'))['about-user'];
+    nameDiv.innerHTML = name + ' ' + surname;
+    emailDiv.innerHTML = email; 
+    aboutDiv.innerHTML = aboutUser;
+}
