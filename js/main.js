@@ -11,32 +11,33 @@ const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/;
 const formPrivateDiv = document.querySelector('.form-private');
 
 const formExperienceDiv = document.querySelector('.form-experience');
-const formEdu = document.querySelector('.form-education');
+const formEducationDiv = document.querySelector('.form-education');
 function displayCurrentForm(currentForm){
     if(currentForm == 1){
         prevBtn.style.backgroundColor = 'var(--light-gray)';
         prevBtn.style.cursor = 'auto';
         formPrivateDiv.style.display = 'flex';
         formExperienceDiv.style.display = 'none';
-        formEdu.style.display = 'none';
+        formEducationDiv.style.display = 'none';
     }else if(currentForm == 2){
         displayResume();
         prevBtn.style.cursor = 'pointer';
         prevBtn.style.backgroundColor = 'var(--purple)';
         formPrivateDiv.style.display = 'none';
         formExperienceDiv.style.display = 'flex';
-        formEdu.style.display = 'none';
+        formEducationDiv.style.display = 'none';
     }else if(currentForm == 3){
         formPrivateDiv.style.display = 'none';
         formExperienceDiv.style.display = 'none';
-        formEdu.style.display = 'flex';
+        formEducationDiv.style.display = 'flex';
     }
 }
 const allInputs = document.querySelectorAll('input');
 const formPrivate = formPrivateDiv.querySelector('form');
 const formExp = formExperienceDiv.querySelector('form');
+const formEdu = formEducationDiv.querySelector('form');
 
-[formPrivate, formExp].forEach(form=>{
+[formPrivate, formExp, formEdu].forEach(form=>{
     form.addEventListener('input', ()=>{
         handleForm(form);
         saveForm(form);
@@ -44,7 +45,6 @@ const formExp = formExperienceDiv.querySelector('form');
 });
 if(!localStorage.getItem('formsExp')){localStorage.setItem('formsExp', JSON.stringify([]));}
 if(!localStorage.getItem('formsEdu')){localStorage.setItem('formsEdu', JSON.stringify([]));}
-
 
 
 function saveForm(form){
@@ -59,29 +59,40 @@ function saveForm(form){
 
     let array = [];
     const newObject = {};
+    const objectExists = array.some(object=>{
+        return object.formName == form.id;
+    });
+
     if (form.parentElement == "formEducation") {
         if (localStorage.getItem("formsEdu")) {
             array = JSON.parse(localStorage.getItem("formsEdu"));
         }
-        array.push(data);
-        localStorage.setItem("formsEdu", JSON.stringify(array));
-    }else if(form.parentElement == formExperienceDiv) {
-        if (localStorage.getItem("formsExp")) {
-            array = JSON.parse(localStorage.getItem("formsExp"));
-        }
-
-        const objectExists = array.some(object=>{
-            return object.name == form.id;
-        });
         if(objectExists){
             array.forEach(object=>{
-                if(object.name == form.id){
+                if(object.formName == form.id){
                     console.log('already exists');
                     object['data'] = data;
                 }
             });
         }else{
-            newObject['name'] = form.id;
+            newObject['formName'] = form.id;
+            newObject['data'] = data;
+            array.push(newObject);
+        }
+        localStorage.setItem("formsEdu", JSON.stringify(array));
+    }else if(form.parentElement == formExperienceDiv) {
+        if (localStorage.getItem("formsExp")) {
+            array = JSON.parse(localStorage.getItem("formsExp"));
+        }
+        if(objectExists){
+            array.forEach(object=>{
+                if(object.formName == form.id){
+                    console.log('already exists');
+                    object['data'] = data;
+                }
+            });
+        }else{
+            newObject['formName'] = form.id;
             newObject['data'] = data;
             array.push(newObject);
         }
@@ -134,25 +145,6 @@ function handleForm(form){
     // saveData(form);
 }
 
-
-
-function saveData(form){
-    const formData = {};
-    const formParent = form.parentElement;
-    Array.from(form.querySelectorAll('input')).forEach(input=>{
-        if(input.type !== 'file') formData[input.id] = input.value;
-    });
-
-    if(formParent.className == 'form-private'){
-        formData['about-user'] = form.querySelector('textArea').value;
-    }else if(formParent.className == 'form-experience'){
-        formData['describtion'] = form.querySelector('textarea').value;
-    }else{ // if education
-        formData['grad-describtion'] = form.querySelector('textarea').value;
-    }
-    
-    localStorage.setItem(`${form.id}`, JSON.stringify(formData));
-}
 
 // display saved data(first form)
 displayData(formPrivateDiv.querySelector('form'));
