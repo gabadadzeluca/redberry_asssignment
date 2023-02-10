@@ -54,55 +54,46 @@ function saveForm(form){
         data[key] = value;
     }
     const textarea = form.querySelector('textarea');
-    data[textarea.id] = textarea.value;
+    data[textarea.name] = textarea.value;
     const json = JSON.stringify(data);
 
     let array = [];
     const newObject = {};
     
-
-    if (form.parentElement == formEducationDiv) {
-        if (localStorage.getItem("formsEdu")) {
-            array = JSON.parse(localStorage.getItem("formsEdu"));
-        }
-        const objectExists = array.some(object=>{
-            return object.formName == form.id;
-        });
-        if(objectExists){
-            array.forEach(object=>{
-                if(object.formName == form.id){
-                    console.log('already exists');
-                    object['data'] = data;
-                }
-            });
-        }else{
-            newObject['formName'] = form.id;
-            newObject['data'] = data;
-            array.push(newObject);
-        }
-        localStorage.setItem("formsEdu", JSON.stringify(array));
-    }else if(form.parentElement == formExperienceDiv) {
-        if (localStorage.getItem("formsExp")) {
-            array = JSON.parse(localStorage.getItem("formsExp"));
-        }
-        const objectExists = array.some(object=>{
-            return object.formName == form.id;
-        });
-        if(objectExists){
-            array.forEach(object=>{
-                if(object.formName == form.id){
-                    console.log('already exists');
-                    object['data'] = data;
-                }
-            });
-        }else{
-            newObject['formName'] = form.id;
-            newObject['data'] = data;
-            array.push(newObject);
-        }
-        localStorage.setItem("formsExp", JSON.stringify(array));
-    } else {// private form
+    if(form.parentElement == formPrivateDiv){
         localStorage.setItem("formPrivate", JSON.stringify(data));
+    }else{
+        if(form.parentElement == formEducationDiv){
+            if (localStorage.getItem("formsEdu")) {
+                array = JSON.parse(localStorage.getItem("formsEdu"));
+            }
+        }else if(form.parentElement == formExperienceDiv){
+            if (localStorage.getItem("formsExp")) {
+                array = JSON.parse(localStorage.getItem("formsExp"));
+            }
+        }
+        
+        const objectExists = array.some(object=>{
+            return object.formName == form.id;
+        });
+        if(objectExists){
+            array.forEach(object=>{
+                if(object.formName == form.id){
+                    console.log('already exists');
+                    object['data'] = data;
+                }
+            });
+        }else{
+            newObject['formName'] = form.id;
+            newObject['data'] = data;
+            array.push(newObject);
+        }
+
+        if(form.parentElement == formEducationDiv){
+            localStorage.setItem("formsEdu", JSON.stringify(array));
+        }else{
+            localStorage.setItem("formsExp", JSON.stringify(array));
+        }
     }
 }
 
@@ -373,6 +364,7 @@ function duplicateForm(){
     container.append(formCopy);
     formCopy.addEventListener('input', ()=>{
         handleForm(formCopy);
+        saveForm(formCopy);
     });
 }
 
