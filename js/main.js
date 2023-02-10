@@ -62,7 +62,7 @@ function saveForm(form){
     
     if(form.parentElement == formPrivateDiv){
         localStorage.setItem("formPrivate", JSON.stringify(data));
-    }else{
+    }else{// if not first form
         if(form.parentElement == formEducationDiv){
             if (localStorage.getItem("formsEdu")) {
                 array = JSON.parse(localStorage.getItem("formsEdu"));
@@ -137,32 +137,52 @@ function handleForm(form){
         checkTextarea(textArea);
     }
 
-    // saveData(form);
 }
 
 
 // display saved data(first form)
-displayData(formPrivateDiv.querySelector('form'));
+displayData(formPrivate);
 displayData(formExperienceDiv.querySelector('form'));
 
 function displayData(form){ 
     const inputFields = form.querySelectorAll('input');
-    const formData = JSON.parse(localStorage.getItem(`${form.id}`));
-    if(formData){
-        inputFields.forEach(input => {
-            if(input.type == 'file') return;
-            input.value = formData[input.name];
-            if(input.type == 'text'){
-                checkTextValidity(input);
-            }else if(input.type == 'tel'){
-                checkNumberValidity(input);
-            }else if(input.type == 'email'){
-                checkEmailValidity(input);
-            }else if(input.type == 'date'){
-                checkDateValidity(input);
-            }
+    if(form.parentElement == formPrivateDiv){
+        const formData = JSON.parse(localStorage.getItem(`${form.id}`));
+        if(formData){
+            inputFields.forEach(input => {
+                if(input.type == 'file') return;
+                input.value = formData[input.name];
+                if(input.type == 'text'){
+                    checkTextValidity(input);
+                }else if(input.type == 'tel'){
+                    checkNumberValidity(input);
+                }else if(input.type == 'email'){
+                    checkEmailValidity(input);
+                }else if(input.type == 'date'){
+                    checkDateValidity(input);
+                }
+            });
+        }
+       
+    }else{
+        let data;
+        let array;
+        let textarea = form.querySelector('textarea');
+        if(form.parentElement == formExperienceDiv){
+            array = JSON.parse(localStorage.getItem('formsExp'));
+        }else{
+            array = JSON.parse(localStorage.getItem('formsEdu'));
+        }
+        data = array.find(item=> item.formName == form.id).data;
+        textarea.value = data[textarea.name];
+        inputFields.forEach(input=>{
+            console.log(input.name);
+            input.value = data[input.name]; 
         });
-    } 
+
+    }
+   
+   
 }
 //add options to a select element
 displayDegrees();
