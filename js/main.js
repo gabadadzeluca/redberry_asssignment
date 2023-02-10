@@ -39,8 +39,57 @@ const formExp = formExperienceDiv.querySelector('form');
 [formPrivate, formExp].forEach(form=>{
     form.addEventListener('input', ()=>{
         handleForm(form);
+        saveForm(form);
     });
 });
+if(!localStorage.getItem('formsExp')){localStorage.setItem('formsExp', JSON.stringify([]));}
+if(!localStorage.getItem('formsEdu')){localStorage.setItem('formsEdu', JSON.stringify([]));}
+
+
+
+function saveForm(form){
+    const formData = new FormData(form);
+    const data = {};
+    for (const [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    const textarea = form.querySelector('textarea');
+    data[textarea.id] = textarea.value;
+    const json = JSON.stringify(data);
+
+    let array = [];
+    const newObject = {};
+    if (form.parentElement == "formEducation") {
+        if (localStorage.getItem("formsEdu")) {
+            array = JSON.parse(localStorage.getItem("formsEdu"));
+        }
+        array.push(data);
+        localStorage.setItem("formsEdu", JSON.stringify(array));
+    }else if(form.parentElement == formExperienceDiv) {
+        if (localStorage.getItem("formsExp")) {
+            array = JSON.parse(localStorage.getItem("formsExp"));
+        }
+
+        const objectExists = array.some(object=>{
+            return object.name == form.id;
+        });
+        if(objectExists){
+            array.forEach(object=>{
+                if(object.name == form.id){
+                    console.log('already exists');
+                    object['data'] = data;
+                }
+            });
+        }else{
+            newObject['name'] = form.id;
+            newObject['data'] = data;
+            array.push(newObject);
+        }
+        localStorage.setItem("formsExp", JSON.stringify(array));
+    } else {// private form
+        localStorage.setItem("formPrivate", JSON.stringify(data));
+    }
+}
 
 // add error messages to each input
 allInputs.forEach(input=>{
@@ -82,8 +131,10 @@ function handleForm(form){
         checkTextarea(textArea);
     }
 
-    saveData(form);
+    // saveData(form);
 }
+
+
 
 function saveData(form){
     const formData = {};
@@ -128,15 +179,6 @@ function displayData(form){
 }
 //add options to a select element
 displayDegrees();
-
-// const observer = new MutationObserver(function(mutations) {
-//     mutations.forEach(function(mutation) {
-//         if(mutation.type === "childList") {
-//             console.log('mutation')
-//         }
-//     });
-// });
-// observer.observe(document.querySelector('body'), {childList:true});
 
 function addErrorText(input, text){
     if(input.name !== 'name' &&  input.name !== 'surname'){
@@ -299,7 +341,7 @@ addEduBtn.addEventListener('click', duplicateForm);
 addExpBtn.addEventListener('click', duplicateForm);
 
 if( !localStorage.getItem('fomrCountEdu')) localStorage.setItem('formCountEdu', 1);
-let formCountEdu = 1 || localStorage.getItem('fomrCountEdu');
+let formCountEdu = localStorage.getItem('fomrCountEdu');
 console.log('formcountEdu:',formCountEdu);
 
 if(!localStorage.getItem('formCountExp')) localStorage.setItem('formCountExp', 1);
@@ -313,6 +355,7 @@ function duplicateForm(){
         container = document.querySelector('.form-education');
         form = container.querySelector('form');
         formCountEdu++;
+        
         localStorage.setItem('formCountEdu', formCountEdu);
         formCount = formCountEdu;
     }else{
@@ -330,7 +373,7 @@ function duplicateForm(){
         element.classList.forEach(className=>{
             element.classList.remove(className);
         });
-      });
+    });
     container.append(formCopy);
     formCopy.addEventListener('input', ()=>{
         handleForm(formCopy);
@@ -343,7 +386,7 @@ displayCurrentForm(currentForm);
 
 function displayResume(){
     const resumeContainer = document.querySelector('.resume-active');
-    displayUserInfo(resumeContainer);
+    // displayUserInfo(resumeContainer);
 }
 
 function displayUserInfo(resumeContainer){
