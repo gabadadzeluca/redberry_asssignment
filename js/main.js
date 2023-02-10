@@ -59,14 +59,15 @@ function saveForm(form){
 
     let array = [];
     const newObject = {};
-    const objectExists = array.some(object=>{
-        return object.formName == form.id;
-    });
+    
 
-    if (form.parentElement == "formEducation") {
+    if (form.parentElement == formEducationDiv) {
         if (localStorage.getItem("formsEdu")) {
             array = JSON.parse(localStorage.getItem("formsEdu"));
         }
+        const objectExists = array.some(object=>{
+            return object.formName == form.id;
+        });
         if(objectExists){
             array.forEach(object=>{
                 if(object.formName == form.id){
@@ -84,6 +85,9 @@ function saveForm(form){
         if (localStorage.getItem("formsExp")) {
             array = JSON.parse(localStorage.getItem("formsExp"));
         }
+        const objectExists = array.some(object=>{
+            return object.formName == form.id;
+        });
         if(objectExists){
             array.forEach(object=>{
                 if(object.formName == form.id){
