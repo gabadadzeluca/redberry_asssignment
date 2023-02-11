@@ -55,7 +55,6 @@ function saveForm(form){
     }
     const textarea = form.querySelector('textarea');
     data[textarea.name] = textarea.value;
-    const json = JSON.stringify(data);
 
     let array = [];
     const newObject = {};
@@ -142,7 +141,7 @@ function handleForm(form){
 
 // display saved data(first form)
 displayData(formPrivate);
-displayData(formExperienceDiv.querySelector('form'));
+displayData(formExp);
 
 function displayData(form){ 
     const inputFields = form.querySelectorAll('input');
@@ -152,15 +151,6 @@ function displayData(form){
             inputFields.forEach(input => {
                 if(input.type == 'file') return;
                 input.value = formData[input.name];
-                if(input.type == 'text'){
-                    checkTextValidity(input);
-                }else if(input.type == 'tel'){
-                    checkNumberValidity(input);
-                }else if(input.type == 'email'){
-                    checkEmailValidity(input);
-                }else if(input.type == 'date'){
-                    checkDateValidity(input);
-                }
             });
         }
        
@@ -179,10 +169,19 @@ function displayData(form){
             console.log(input.name);
             input.value = data[input.name]; 
         });
-
+        
     }
-   
-   
+    inputFields.forEach(input=>{
+        if(input.type == 'text'){
+            checkTextValidity(input);
+        }else if(input.type == 'tel'){
+            checkNumberValidity(input);
+        }else if(input.type == 'email'){
+            checkEmailValidity(input);
+        }else if(input.type == 'date'){
+            checkDateValidity(input);
+        }
+    });
 }
 //add options to a select element
 displayDegrees();
