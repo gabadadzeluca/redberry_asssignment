@@ -154,7 +154,6 @@ function displayData(form){
             });
             checkAllInputs(inputFields);
         }
-       
     }else{
         let data;
         let array;
@@ -165,16 +164,13 @@ function displayData(form){
             array = JSON.parse(localStorage.getItem('formsEdu'));
         }
         if(array.length > 0){
-            console.log(array);
             data = array.find(item=> item.formName == form.id).data;
             textarea.value = data[textarea.name];
             inputFields.forEach(input=>{
-                console.log(input.name);
                 input.value = data[input.name]; 
             });
             checkAllInputs(inputFields);
         }
-    
     }
    
 }
@@ -355,12 +351,17 @@ const addEduBtn = document.getElementById('edu-btn');
 addEduBtn.addEventListener('click', duplicateForm);
 addExpBtn.addEventListener('click', duplicateForm);
 
-if( !localStorage.getItem('fomrCountEdu')) localStorage.setItem('formCountEdu', 0);
-let formCountEdu = localStorage.getItem('fomrCountEdu');
-console.log('formcountEdu:',formCountEdu);
+let formCountEdu = localStorage.getItem('formCountEdu');
+if(!formCountEdu){
+    formCountEdu = 1;
+    localStorage.setItem('formCountEdu', formCountEdu);
+}
 
-if(!localStorage.getItem('formCountExp')) localStorage.setItem('formCountExp', 0);
 let formCountExp = localStorage.getItem('formCountExp');
+if(!formCountExp){
+    formCountExp = 1;
+    localStorage.setItem('formCountExp', formCountExp);
+}
 
 function duplicateForm(){
     let form;
@@ -368,18 +369,16 @@ function duplicateForm(){
     let formCount;
     if(this.id == 'edu-btn'){
         container = document.querySelector('.form-education');
-        form = container.querySelector('form');
         formCountEdu++;
-        
         localStorage.setItem('formCountEdu', formCountEdu);
         formCount = formCountEdu;
     }else if(this.id == 'exp-btn'){
         container = document.querySelector('.form-experience');
-        form = container.querySelector('form');
         formCountExp++;
         localStorage.setItem('formCountExp', formCountExp);
         formCount = formCountExp;
     }
+    form = container.querySelector('form');
     const formCopy = form.cloneNode(true);
     formCopy.id = `${form.id}${formCount}`;
     formCopy.querySelectorAll('[name]').forEach(element => {
@@ -398,11 +397,46 @@ function duplicateForm(){
 
 displayCurrentForm(currentForm);
 
+displayForms(JSON.parse(localStorage.getItem('formsEdu')));
 
-
-function displayForms(){
+function displayForms(formsArray){
     // if local storage contains more than one form create copies and display them on the start
+    const formArrayEdu = JSON.parse(localStorage.getItem('formsEdu'));
+    const formArrayExp = JSON.parse(localStorage.getItem('formsExp'));
+    if(formsArray.length > 1){
+        // create and display additional form for refresh
+        formsArray.forEach(object=>{
+            createFormHTML(object);
+        });
+    }
 
+}
+
+function createFormHTML(object){
+    const formName = object.formName;
+    const data = object.data;
+
+    if(document.querySelector(`form[id=${formName}]`) !== null) return;
+    // create a new form and fill in the inputs
+    const strEdu = 'formEdu';
+    const parentElement = formName.includes(strEdu)? formEducationDiv : formExperienceDiv;
+
+    const formTemplate = parentElement.querySelector('form');
+
+    const count = formName.slice(7);
+    const formCopy = formTemplate.cloneNode(true);
+
+    formCopy.id = `${formName}`;
+    
+    formCopy.querySelectorAll('[name]').forEach(element => {
+        element.name = `${element.name}${count}`;
+        element.value = data[element.name];
+        element.id = `${element.id}${count}`
+        // element.classList.forEach(className=>{
+        //     element.classList.remove(className);
+        // });
+    });
+    parentElement.append(formCopy);
 }
 
 function displayResume(){
