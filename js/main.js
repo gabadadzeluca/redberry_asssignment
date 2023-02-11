@@ -5,7 +5,7 @@ import {getDegrees} from "./degrees.js";
 const degreesList = await getDegrees();
 let currentForm = 1;
 const patternGeo = /^[ა-ჰ]+$/u;
-const patterEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
+const patternEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
 const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/; 
 
 const formPrivateDiv = document.querySelector('.form-private');
@@ -107,13 +107,26 @@ function handleForm(form){
     const dateInputs = Array.from(form.querySelectorAll('input[type="date"]'));
     const textArea = form.querySelector('textarea');
     const fileInput = form.querySelector('input[type="file"]');
+    const selectInput = form.querySelector('input[type="select"]');
+
+
+    let emailValid;
+    let numberValid;
+    let textAreaValid = checkTextarea(textArea);
+    let selectValid;
     if(fileInput) {
         const file = fileInput.files[0];
         if(file) saveImage(file);
     }
     if(emailInput && numberInput){
-        checkNumberValidity(numberInput);
-        checkEmailValidity(emailInput);
+        // checkNumberValidity(numberInput);
+        // checkEmailValidity(emailInput);
+        emailValid = checkEmailValidity(emailInput);
+        numberValid = checkNumberValidity(numberInput);
+    }
+    if(selectInput){
+        // checkSelect(selectInput);
+        selectValid = checkSelect(selectInput);
     }
 
     textInputs.forEach(input=>{
@@ -129,6 +142,25 @@ function handleForm(form){
     let datesValid = (dateInputs).every(input=>{
         return checkDateValidity(input);
     });
+    if(textArea){
+        textAreaValid =checkTextarea(textArea);
+    }
+
+    let validationArray = [];
+    let formIsValid = false;    
+    if(form.parentElement == formPrivateDiv){
+        validationArray = [textsValid, emailValid, numberValid];
+    }else if(form.parentElement == formExperienceDiv){
+        validationArray = [textsValid, datesValid, textAreaValid];
+    }else{ // education div
+        validationArray = [textsValid, datesValid, textAreaValid, selectValid];
+    }
+    formIsValid = validationArray.every(value=>{
+        return value === true;
+
+    });
+    console.log(form.id,"valid:",formIsValid);
+
     
     if(textArea && textArea.dataset.mandatory == true){
         console.log('mandatory', textArea.dataset.mandatory);
@@ -144,9 +176,11 @@ displayData(formExp);
 
 function displayData(form){ 
     const inputFields = form.querySelectorAll('input');
+    let textarea = form.querySelector('textarea');
     if(form.parentElement == formPrivateDiv){
         const formData = JSON.parse(localStorage.getItem(`${form.id}`));
         if(formData){
+            textarea.value = formData[textarea.name];
             inputFields.forEach(input => {
                 if(input.type == 'file') return;
                 input.value = formData[input.name];
@@ -156,7 +190,6 @@ function displayData(form){
     }else{
         let data;
         let array;
-        let textarea = form.querySelector('textarea');
         if(form.parentElement == formExperienceDiv){
             array = JSON.parse(localStorage.getItem('formsExp'));
         }else{
@@ -235,7 +268,7 @@ function checkTextValidity(input){
 }
 
 function checkEmailValidity(input){
-    if(!patterEmail.test(input.value)){
+    if(!patternEmail.test(input.value)){
         displayInvalidInput(input);
         showError(input);
     }else{
@@ -275,11 +308,19 @@ function isValidDate(dateString) {
 
 function checkTextarea(textarea){
     if(textarea.value.length > 2){
-        textarea.classList.remove('invalid');
-        textarea.classList.add('valid');
+        displayValidInput(textarea);
         return true;
     }else{
-        textarea.classList.add('invalid');
+        displayInvalidInput(textarea);
+    }
+}
+
+function checkSelect(select){
+    if(select.value !== "" && select.value !== "აირჩიეთ ხარიხსი"){
+        displayValidInput(select);
+    }else{
+        showError(select);
+        displayInvalidInput(select);
     }
 }
 
@@ -396,19 +437,20 @@ function duplicateForm(){
 
 displayCurrentForm(currentForm);
 
-displayForms(JSON.parse(localStorage.getItem('formsEdu')));
 
+const formArrayEdu = JSON.parse(localStorage.getItem('formsEdu'));
+const formArrayExp = JSON.parse(localStorage.getItem('formsExp'));
+displayForms(formArrayEdu);
+displayForms(formArrayExp);
+
+// takes in an array of objects ([{ fileName:name, data:{} ...}]]) => updates HTML
 function displayForms(formsArray){
-    // if local storage contains more than one form create copies and display them on the start
-    const formArrayEdu = JSON.parse(localStorage.getItem('formsEdu'));
-    const formArrayExp = JSON.parse(localStorage.getItem('formsExp'));
     if(formsArray.length > 1){
         // create and display additional form for refresh
         formsArray.forEach(object=>{
             createFormHTML(object);
         });
     }
-
 }
 
 function createFormHTML(object){
