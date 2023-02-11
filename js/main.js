@@ -78,7 +78,6 @@ function saveForm(form){
         if(objectExists){
             array.forEach(object=>{
                 if(object.formName == form.id){
-                    console.log('already exists');
                     object['data'] = data;
                 }
             });
@@ -192,7 +191,7 @@ function checkAllInputs(inputFields){
 displayDegrees();
 
 function addErrorText(input, text){
-    if(input.name !== 'name' &&  input.name !== 'surname'){
+    if(input.type == 'text' && input.name !== 'name' &&  input.name !== 'surname'){
         text = textError;
     }else if( (input.name == 'name' || input.name == 'surname')) {
             text = textErrorName;
@@ -416,7 +415,7 @@ function createFormHTML(object){
     const formName = object.formName;
     const data = object.data;
 
-    if(document.querySelector(`form[id=${formName}]`) !== null) return;
+    if(document.querySelector(`form[id=${formName}]`) !== null) return; // if a form already exists do nothing
     // create a new form and fill in the inputs
     const strEdu = 'formEdu';
     const parentElement = formName.includes(strEdu)? formEducationDiv : formExperienceDiv;
@@ -437,11 +436,15 @@ function createFormHTML(object){
         // });
     });
     parentElement.append(formCopy);
+    formCopy.addEventListener('input', ()=>{
+        handleForm(formCopy);
+        saveForm(formCopy);
+    });
 }
 
 function displayResume(){
     const resumeContainer = document.querySelector('.resume-active');
-    // displayUserInfo(resumeContainer);
+    displayUserInfo(resumeContainer);
 }
 
 function displayUserInfo(resumeContainer){
@@ -451,7 +454,7 @@ function displayUserInfo(resumeContainer){
     const aboutDiv = resumeContainer.querySelector('.about-user');
     
     let imageData = JSON.parse(localStorage.getItem('imageData'));
-    image.src =  imageData.image;
+    image.src = imageData.image;        
 
     let {name, surname, email,tel} = JSON.parse(localStorage.getItem('formPrivate'));
     let aboutUser = JSON.parse(localStorage.getItem('formPrivate'))['about-user'];
