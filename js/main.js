@@ -163,12 +163,16 @@ function displayData(form){
         }else{
             array = JSON.parse(localStorage.getItem('formsEdu'));
         }
-        data = array.find(item=> item.formName == form.id).data;
-        textarea.value = data[textarea.name];
-        inputFields.forEach(input=>{
-            console.log(input.name);
-            input.value = data[input.name]; 
-        });
+        if(array.length > 0){
+            console.log(array);
+            data = array.find(item=> item.formName == form.id).data;
+            textarea.value = data[textarea.name];
+            inputFields.forEach(input=>{
+                console.log(input.name);
+                input.value = data[input.name]; 
+            });
+        }
+       
         
     }
     inputFields.forEach(input=>{
@@ -346,11 +350,11 @@ const addEduBtn = document.getElementById('edu-btn');
 addEduBtn.addEventListener('click', duplicateForm);
 addExpBtn.addEventListener('click', duplicateForm);
 
-if( !localStorage.getItem('fomrCountEdu')) localStorage.setItem('formCountEdu', 1);
+if( !localStorage.getItem('fomrCountEdu')) localStorage.setItem('formCountEdu', 0);
 let formCountEdu = localStorage.getItem('fomrCountEdu');
 console.log('formcountEdu:',formCountEdu);
 
-if(!localStorage.getItem('formCountExp')) localStorage.setItem('formCountExp', 1);
+if(!localStorage.getItem('formCountExp')) localStorage.setItem('formCountExp', 0);
 let formCountExp = localStorage.getItem('formCountExp');
 
 function duplicateForm(){
@@ -364,7 +368,7 @@ function duplicateForm(){
         
         localStorage.setItem('formCountEdu', formCountEdu);
         formCount = formCountEdu;
-    }else{
+    }else if(this.id == 'exp-btn'){
         container = document.querySelector('.form-experience');
         form = container.querySelector('form');
         formCountExp++;
@@ -390,6 +394,11 @@ function duplicateForm(){
 displayCurrentForm(currentForm);
 
 
+
+function displayForms(){
+    // if local storage contains more than one form create copies and display them on the start
+
+}
 
 function displayResume(){
     const resumeContainer = document.querySelector('.resume-active');
