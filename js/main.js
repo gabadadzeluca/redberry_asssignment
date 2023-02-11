@@ -152,6 +152,7 @@ function displayData(form){
                 if(input.type == 'file') return;
                 input.value = formData[input.name];
             });
+            checkAllInputs(inputFields);
         }
        
     }else{
@@ -171,10 +172,14 @@ function displayData(form){
                 console.log(input.name);
                 input.value = data[input.name]; 
             });
+            checkAllInputs(inputFields);
         }
-       
-        
+    
     }
+   
+}
+
+function checkAllInputs(inputFields){
     inputFields.forEach(input=>{
         if(input.type == 'text'){
             checkTextValidity(input);
