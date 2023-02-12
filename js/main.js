@@ -14,13 +14,15 @@ const formExperienceDiv = document.querySelector('.form-experience');
 const formEducationDiv = document.querySelector('.form-education');
 function displayCurrentForm(currentForm){
     if(currentForm == 1){
-        prevBtn.style.backgroundColor = 'var(--light-gray)';
-        prevBtn.style.cursor = 'auto';
+        prevBtn.style.display = 'none';
         formPrivateDiv.style.display = 'flex';
         formExperienceDiv.style.display = 'none';
         formEducationDiv.style.display = 'none';
+        nextBtn.style.position = 'absolute';
+        nextBtn.style.left = '90%';
     }else if(currentForm == 2){
         displayResume();
+        prevBtn.style.display = 'block'
         prevBtn.style.cursor = 'pointer';
         prevBtn.style.backgroundColor = 'var(--purple)';
         formPrivateDiv.style.display = 'none';
@@ -55,7 +57,10 @@ function saveForm(form){
     }
     const textarea = form.querySelector('textarea');
     data[textarea.name] = textarea.value;
-
+    const selectInput = form.querySelector('select');
+    if(selectInput){
+        data[selectInput.name] = selectInput.value;
+    }
     let array = [];
     const newObject = {};
     
@@ -107,34 +112,32 @@ function handleForm(form){
     const dateInputs = Array.from(form.querySelectorAll('input[type="date"]'));
     const textArea = form.querySelector('textarea');
     const fileInput = form.querySelector('input[type="file"]');
-    const selectInput = form.querySelector('input[type="select"]');
-
+    const selectInput = form.querySelector('select');
 
     let emailValid;
     let numberValid;
     let textAreaValid = checkTextarea(textArea);
     let selectValid;
+    if(selectInput){
+        selectValid = checkSelect(selectInput);
+    }
     if(fileInput) {
         const file = fileInput.files[0];
         if(file) saveImage(file);
     }
     if(emailInput && numberInput){
-        // checkNumberValidity(numberInput);
-        // checkEmailValidity(emailInput);
         emailValid = checkEmailValidity(emailInput);
         numberValid = checkNumberValidity(numberInput);
     }
-    if(selectInput){
-        // checkSelect(selectInput);
-        selectValid = checkSelect(selectInput);
-    }
 
-    textInputs.forEach(input=>{
-        checkTextValidity(input);
-    });
-    dateInputs.forEach(input=>{
-        checkDateValidity(input);
-    });
+    
+    checkAllInputs(form.querySelectorAll('input'));
+    // textInputs.forEach(input=>{
+    //     checkTextValidity(input);
+    // });
+    // dateInputs.forEach(input=>{
+    //     checkDateValidity(input);
+    // });
 
     let textsValid = (textInputs).every(input=>{
         return checkTextValidity(input);
@@ -142,9 +145,6 @@ function handleForm(form){
     let datesValid = (dateInputs).every(input=>{
         return checkDateValidity(input);
     });
-    if(textArea){
-        textAreaValid =checkTextarea(textArea);
-    }
 
     let validationArray = [];
     let formIsValid = false;    
@@ -156,6 +156,7 @@ function handleForm(form){
         validationArray = [textsValid, datesValid, textAreaValid, selectValid];
     }
     formIsValid = validationArray.every(value=>{
+        console.log(value);
         return value === true;
 
     });
@@ -170,9 +171,11 @@ function handleForm(form){
 }
 
 
-// display saved data(first form)
 displayData(formPrivate);
-displayData(formExp);
+// displayData(formExp);
+// displayData(formEdu);
+// add checking for local storage
+
 
 function displayData(form){ 
     const inputFields = form.querySelectorAll('input');
@@ -190,9 +193,12 @@ function displayData(form){
     }else{
         let data;
         let array;
+
+        let selectInput;
         if(form.parentElement == formExperienceDiv){
             array = JSON.parse(localStorage.getItem('formsExp'));
         }else{
+            selectInput = form.querySelector('select');
             array = JSON.parse(localStorage.getItem('formsEdu'));
         }
         if(array.length > 0){
@@ -201,6 +207,11 @@ function displayData(form){
             inputFields.forEach(input=>{
                 input.value = data[input.name]; 
             });
+            if (selectInput) {
+                setTimeout(() => {
+                  selectInput.value = data[selectInput.name];
+                }, 0);
+              }
             checkAllInputs(inputFields);
         }
     }
@@ -219,6 +230,9 @@ function checkAllInputs(inputFields){
             checkDateValidity(input);
         }
     });
+    const parentForm = (inputFields[0].parentElement.parentElement.parentElement);
+    const selectInput = parentForm.querySelector('select');
+    if(selectInput) checkSelect(selectInput);
 }
 //add options to a select element
 displayDegrees();
@@ -290,13 +304,13 @@ function checkNumberValidity(input){
 }
 
 function checkDateValidity(input){
-    if(input.value) {
-        input.classList.remove('invalid');
-        input.classList.add('valid');
+    if(input.value !== "") {
+        console.log("date is valid:", input.value);
+        displayValidInput(input);
         // input.style.border = '1px solid var(--green)'
         return isValidDate(input.value);
     }else{
-        input.classList.add('invalid');
+        displayInvalidInput(input);
         return false;
     }
 }
@@ -316,12 +330,16 @@ function checkTextarea(textarea){
 }
 
 function checkSelect(select){
-    if(select.value !== "" && select.value !== "აირჩიეთ ხარიხსი"){
+    if(select.value !== "default" && select.value != ''){
         displayValidInput(select);
+        console.log(select, 'valid');
+        
+        return true;
     }else{
-        showError(select);
         displayInvalidInput(select);
+        console.log(select,"invalid")
     }
+
 }
 
 function showError(input) {
@@ -358,7 +376,7 @@ function isFinishDateLater(startDate, finishDate) {
 
 function displayDegrees(){
     let degreeMenu = document.getElementById('degree-menu');
-    let options = '<option disabled selected>აირჩიეთ ხარისხი</option>';
+    let options = '<option disabled selected value="default">აირჩიეთ ხარისხი</option>';
     degreesList.forEach(obj=>{
         options +=  `<option value="${obj.title}" id=${obj.id}>${obj.title}</option>`;
     });
@@ -423,10 +441,13 @@ function duplicateForm(){
     formCopy.id = `${form.id}${formCount}`;
     formCopy.querySelectorAll('[name]').forEach(element => {
         element.name = `${element.name}${formCount}`;
-        element.value = '';
+        if(element.name !== 'degree'){
+            element.value = '';
+        }
         element.classList.forEach(className=>{
             element.classList.remove(className);
         });
+        if(element.name == 'degree') element.value = "default";
     });
     container.append(formCopy);
     formCopy.addEventListener('input', ()=>{
@@ -473,9 +494,6 @@ function createFormHTML(object){
         element.name = `${element.name}${count}`;
         element.value = data[element.name];
         element.id = `${element.id}${count}`
-        // element.classList.forEach(className=>{
-        //     element.classList.remove(className);
-        // });
     });
     parentElement.append(formCopy);
     formCopy.addEventListener('input', ()=>{
