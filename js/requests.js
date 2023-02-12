@@ -1,5 +1,7 @@
 "use strict";
 
+const url = 'https://resume.redberryinternship.ge/api/cvs';
+
 const formsExp = JSON.parse(localStorage.getItem('formsExp'));
 const formsEdu = JSON.parse(localStorage.getItem('formsEdu'));
 const formPrivate = JSON.parse(localStorage.getItem('formPrivate'));
@@ -17,7 +19,6 @@ const blob = new Blob([binaryData], { type: 'image/jpeg' });
 
 let experiences = [];
 let educations = [];
-const url = 'https://resume.redberryinternship.ge/api/cvs';
 formatData(formsEdu);
 formatData(formsExp);
 
@@ -61,7 +62,6 @@ function formatPrivate(formPrivate){
     formPrivate['about_me'] = formPrivate['about-user'];
     delete formPrivate['about-user'];
     formPrivate['image'] = blob;
-    console.log(formPrivate);
 }
 
 
@@ -81,5 +81,23 @@ console.log(dataToSend);
 
 
 
+function sendData(){
+    fetch(url,{
+        method:'POST',
+        headers: {
+            'content-type':'application/json'
+        },
+        body: JSON.stringify(dataToSend)
+    })
+    .then(response=>{
+        if(response.ok){
+            console.log(response);
+            console.log(response.statusText);
+        }
+    })
+    .catch(error=>console.log(error))
+}
+
+sendData();
 
 
