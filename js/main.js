@@ -53,7 +53,9 @@ function saveForm(form){
     const formData = new FormData(form);
     const data = {};
     for (const [key, value] of formData.entries()) {
-        data[key] = value;
+        if(key !== 'user-image'){
+            data[key] = value;
+        }
     }
     const textarea = form.querySelector('textarea');
     data[textarea.name] = textarea.value;
@@ -172,8 +174,8 @@ function handleForm(form){
 
 
 displayData(formPrivate);
-// displayData(formExp);
-// displayData(formEdu);
+displayData(formExp);
+displayData(formEdu);
 // add checking for local storage
 
 
@@ -253,22 +255,22 @@ function addErrorText(input, text){
     input.parentElement.appendChild(errorElement);
 }
 
-function saveImage(file){
+function saveImage(file) { // save image as base64
     const reader = new FileReader();
-    reader.addEventListener('load', ()=>{
-        const imageData = {
-            image: reader.result
-        };
+    reader.addEventListener('load', () => {
+        const imageData = reader.result;
         const label = document.querySelector('label[for="user-image"]');
-        try{
+        try {
             hideError(label); //pass in label to use it as a child element
             localStorage.setItem('imageData', JSON.stringify(imageData));
-        }catch(err){
+        } catch (err) {
             showError(label);
         }
     });
     reader.readAsDataURL(file);
 }
+  
+  
 
 function checkTextValidity(input){
     if (! patternGeo.test(input.value) || input.value.length < 2) {
@@ -514,8 +516,8 @@ function displayUserInfo(resumeContainer){
     const aboutDiv = resumeContainer.querySelector('.about-user');
     
     let imageData = JSON.parse(localStorage.getItem('imageData'));
-    image.src = imageData.image;        
-
+    image.src = imageData;    
+    // add checks    
     let {name, surname, email,tel} = JSON.parse(localStorage.getItem('formPrivate'));
     let aboutUser = JSON.parse(localStorage.getItem('formPrivate'))['about-user'];
     nameDiv.innerHTML = name + ' ' + surname;
