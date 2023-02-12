@@ -4,7 +4,9 @@ import {getDegrees} from "./degrees.js";
 
 const degreesList = await getDegrees();
 let currentForm = 1;
-const patternGeo = /^[ა-ჰ]+$/u;
+const patternGeoName = /^[ა-ჰ]+$/u;
+const patternGeo = /^[ა-ჰ\s]+$/;
+
 const patternEmail = /^[a-zA-Z0-9._%+-]+@redberry\.ge$/;
 const patternNumber = /^(\+995\s?5|5)\s?(\d{3}\s?){2}\d{2}$/; 
 
@@ -61,7 +63,7 @@ function saveForm(form){
     data[textarea.name] = textarea.value;
     const selectInput = form.querySelector('select');
     if(selectInput){
-        data[selectInput.name] = selectInput.value;
+        data[selectInput.name] = selectInput.value.trim();
     }
     let array = [];
     const newObject = {};
@@ -120,6 +122,9 @@ function handleForm(form){
     let numberValid;
     let textAreaValid = checkTextarea(textArea);
     let selectValid;
+
+    checkAllInputs(form.querySelectorAll('input'));
+
     if(selectInput){
         selectValid = checkSelect(selectInput);
     }
@@ -131,15 +136,7 @@ function handleForm(form){
         emailValid = checkEmailValidity(emailInput);
         numberValid = checkNumberValidity(numberInput);
     }
-
     
-    checkAllInputs(form.querySelectorAll('input'));
-    // textInputs.forEach(input=>{
-    //     checkTextValidity(input);
-    // });
-    // dateInputs.forEach(input=>{
-    //     checkDateValidity(input);
-    // });
 
     let textsValid = (textInputs).every(input=>{
         return checkTextValidity(input);
@@ -160,10 +157,15 @@ function handleForm(form){
     formIsValid = validationArray.every(value=>{
         console.log(value);
         return value === true;
-
     });
     console.log(form.id,"valid:",formIsValid);
-
+    if(formIsValid == false){
+        nextBtn.removeEventListener('click', nextForm);
+        prevBtn.removeEventListener('click', prevForm);
+    }else{
+        nextBtn.addEventListener('click', nextForm);
+        prevBtn.addEventListener('click', prevForm);
+    }
     
     if(textArea && textArea.dataset.mandatory == true){
         console.log('mandatory', textArea.dataset.mandatory);
@@ -242,6 +244,8 @@ function checkAllInputs(inputFields){
     }
     const selectInput = parentForm.querySelector('select');
     if(selectInput) checkSelect(selectInput);
+    const textarea = parentForm.querySelector('textarea');
+    if(textarea) checkTextarea(textarea);
 }
 //add options to a select element
 displayDegrees();
@@ -280,13 +284,24 @@ function saveImage(file) { // save image as base64
   
 
 function checkTextValidity(input){
-    if (! patternGeo.test(input.value) || input.value.length < 2) {
-        displayInvalidInput(input);
-        showError(input);
+    if(input.name.includes('name') || input.name.includes('surname')){
+        if (! patternGeoName.test(input.value) || input.value.length < 2) {
+            displayInvalidInput(input);
+            showError(input);
+        }else{
+            displayValidInput(input);
+            hideError(input);
+            return true;
+        }
     }else{
-        displayValidInput(input);
-        hideError(input);
-        return true;
+        if(!patternGeo.test(input.value) || input.value.length < 2){   
+            displayInvalidInput(input);
+            showError(input);
+        }else{
+            displayValidInput(input);
+            hideError(input);
+            return true;
+        }
     }
 }
 
@@ -302,7 +317,7 @@ function checkEmailValidity(input){
 }
 
 function checkNumberValidity(input){
-    if(!patternNumber.test(input.value)){
+    if(!patternNumber.test(input.value.trim())){
         displayInvalidInput(input);
         showError(input);
     }else{
@@ -314,9 +329,7 @@ function checkNumberValidity(input){
 
 function checkDateValidity(input){
     if(input.value !== "") {
-        console.log("date is valid:", input.value);
         displayValidInput(input);
-        // input.style.border = '1px solid var(--green)'
         return isValidDate(input.value);
     }else{
         displayInvalidInput(input);
@@ -330,22 +343,24 @@ function isValidDate(dateString) {
 }
 
 function checkTextarea(textarea){
-    if(textarea.value.length > 2){
-        displayValidInput(textarea);
-        return true;
-    }else{
-        displayInvalidInput(textarea);
+    
+    if(textarea.getAttribute('data-mandatory') == 'true'){
+        if(patternGeo.test(textarea.value) && textarea.value.trim().length > 2){
+            displayValidInput(textarea);
+            return true;
+        }else{
+            displayInvalidInput(textarea);
+            return false;
+        }
     }
 }
 
 function checkSelect(select){
     if(select.value !== "default"){
         displayValidInput(select);
-        console.log(select, 'valid');
         return true;
     }else{
         displayInvalidInput(select);
-        console.log(select,"invalid")
     }
 
 }
@@ -386,8 +401,8 @@ function displayDegrees(){
 const prevBtn = document.querySelector('.previous-btn');
 const nextBtn = document.querySelector('.next-btn');
 
-prevBtn.addEventListener('click', prevForm);
-nextBtn.addEventListener('click', nextForm);
+// prevBtn.addEventListener('click', prevForm);
+// nextBtn.addEventListener('click', nextForm);
 
 function nextForm(){
     if(currentForm == 3) return;
@@ -513,13 +528,16 @@ function displayUserInfo(resumeContainer){
     const nameDiv = resumeContainer.querySelector('.name');
     const emailDiv = resumeContainer.querySelector('.email');
     const aboutDiv = resumeContainer.querySelector('.about-user');
-    
+
+    const formData = JSON.parse(localStorage.getItem('formPrivate'));
+    if(formData){
+        let {name, surname, email,tel} = formData;
+        let aboutUser = formData['about-user'];
+        nameDiv.innerHTML = name + ' ' + surname;
+        emailDiv.innerHTML = email; 
+        aboutDiv.innerHTML = aboutUser;
+    }
     let imageData = JSON.parse(localStorage.getItem('imageData'));
     image.src = imageData;    
-    // add checks    
-    let {name, surname, email,tel} = JSON.parse(localStorage.getItem('formPrivate'));
-    let aboutUser = JSON.parse(localStorage.getItem('formPrivate'))['about-user'];
-    nameDiv.innerHTML = name + ' ' + surname;
-    emailDiv.innerHTML = email; 
-    aboutDiv.innerHTML = aboutUser;
+
 }
