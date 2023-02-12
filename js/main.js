@@ -174,8 +174,12 @@ function handleForm(form){
 
 
 displayData(formPrivate);
-displayData(formExp);
-displayData(formEdu);
+if(JSON.parse(localStorage.getItem('formsExp')).length > 0){
+    displayData(formExp);
+}
+if(JSON.parse(localStorage.getItem('formsEdu')).length > 0){
+    displayData(formEdu);
+}
 // add checking for local storage
 
 
@@ -232,7 +236,10 @@ function checkAllInputs(inputFields){
             checkDateValidity(input);
         }
     });
-    const parentForm = (inputFields[0].parentElement.parentElement.parentElement);
+    let parentForm = (inputFields[0].parentElement.parentElement);
+    if(parentForm.tagName.toLowerCase() !== 'form'){
+        parentForm = parentForm.parentElement;
+    }
     const selectInput = parentForm.querySelector('select');
     if(selectInput) checkSelect(selectInput);
 }
@@ -332,10 +339,9 @@ function checkTextarea(textarea){
 }
 
 function checkSelect(select){
-    if(select.value !== "default" && select.value != ''){
+    if(select.value !== "default"){
         displayValidInput(select);
         console.log(select, 'valid');
-        
         return true;
     }else{
         displayInvalidInput(select);
@@ -366,15 +372,6 @@ function displayValidInput(input){
     });
     input.classList.add('valid')
 }
-
-
-// function for comparing dates
-function isFinishDateLater(startDate, finishDate) {
-    let start = new Date(startDate);
-    let finish = new Date(finishDate);
-    return !isNaN(start.getTime()) && !isNaN(finish.getTime()) && finish > start;
-}
-
 
 function displayDegrees(){
     let degreeMenu = document.getElementById('degree-menu');
@@ -446,10 +443,11 @@ function duplicateForm(){
         if(element.name !== 'degree'){
             element.value = '';
         }
+        if(element.name.includes('degree')) element.value = "default";
+        
         element.classList.forEach(className=>{
             element.classList.remove(className);
         });
-        if(element.name == 'degree') element.value = "default";
     });
     container.append(formCopy);
     formCopy.addEventListener('input', ()=>{
@@ -495,8 +493,9 @@ function createFormHTML(object){
     formCopy.querySelectorAll('[name]').forEach(element => {
         element.name = `${element.name}${count}`;
         element.value = data[element.name];
-        element.id = `${element.id}${count}`
+        element.id = `${element.id}${count}`;
     });
+    checkAllInputs(formCopy.querySelectorAll('input'));
     parentElement.append(formCopy);
     formCopy.addEventListener('input', ()=>{
         handleForm(formCopy);
