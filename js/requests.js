@@ -1,4 +1,5 @@
 "use strict";
+// this code formats data, creates an objcet and sends it as a  post request
 
 const url = 'https://resume.redberryinternship.ge/api/cvs';
 
@@ -65,7 +66,7 @@ function formatPrivate(formPrivate){
 }
 
 
-const dataToSend = {
+export const dataToSend = {
     "name": formPrivate.name,
     "surname": formPrivate.surname,
     "email": formPrivate.email,
@@ -76,12 +77,8 @@ const dataToSend = {
     "about_me": formPrivate.about_me
 }
 
-console.log(dataToSend);
 
-
-
-
-function sendData(){
+export function sendData(){
     fetch(url,{
         method:'POST',
         headers: {
@@ -92,12 +89,11 @@ function sendData(){
     .then(response=>{
         if(response.ok){
             console.log(response);
-            console.log(response.statusText);
+            console.log("response status:",response.statusText);
         }
     })
     .catch(error=>console.log(error))
 }
 
-sendData();
 
 
