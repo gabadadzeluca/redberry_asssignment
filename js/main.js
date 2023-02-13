@@ -2,9 +2,9 @@
 import {textError, telError, textErrorName, emailError, fileError} from "./errors.js";
 import {getDegrees} from "./degrees.js";
 import {
-    displayInvalidInput, displayValidInput, hideError, showError, 
+    hideError, showError, 
     checkDateValidity, checkSelect, checkTextValidity, checkEmailValidity,
-    checkTextarea, checkNumberValidity, patternEmail, patternGeo, patternNumber, patternGeoName
+    checkTextarea, checkNumberValidity, displayUserInfo
 } from "./functional.js";
 import { displayInput } from "./resume.js";
 import { formatPrivate, sendData, formatData, base64toBlob } from "./requests.js";
@@ -71,7 +71,8 @@ function saveForm(form){
     data[textarea.name] = textarea.value;
     const selectInput = form.querySelector('select');
     if(selectInput){
-        data[selectInput.name] = selectInput.value.trim();
+        const selectedOption = selectInput.options[selectInput.selectedIndex];
+        data[selectInput.name] = selectedOption.id;
     }
     let array = [];
     const newObject = {};
@@ -218,7 +219,9 @@ function displayData(form){
             });
             if (selectInput) {
                 setTimeout(() => {
-                  selectInput.value = data[selectInput.name];
+                    const id = data[selectInput.name];
+                    const template = selectInput.querySelector(`option[id="${id}"]`);
+                    selectInput.value = template.value;
                 }, 0);
               }
             checkAllInputs(inputFields);
@@ -404,6 +407,12 @@ function createFormHTML(object){
         element.name = `${element.name}${count}`;
         element.value = data[element.name];
         element.id = `${element.id}${count}`;
+        if(element.name.includes('degree')){
+            console.log(data[element.name]);
+            const id = data[element.name];
+            const selectInput = element.querySelector(`option[id="${id}"]`);
+            element.value = selectInput.value;
+        }
     });
     checkAllInputs(formCopy.querySelectorAll('input'));
     parentElement.append(formCopy);
@@ -420,25 +429,6 @@ function displayResume(){
 }
 function hideResume(){
     resumeContainer.style.display = 'none';
-}
-
-function displayUserInfo(resumeContainer){
-    const image = resumeContainer.querySelector('img');
-    const nameDiv = resumeContainer.querySelector('.name');
-    const emailDiv = resumeContainer.querySelector('.email');
-    const aboutDiv = resumeContainer.querySelector('.about-user');
-    const numberDiv = resumeContainer.querySelector('.number');
-    const formData = JSON.parse(localStorage.getItem('formPrivate'));
-    if(formData){
-        let {name, surname, email, mobile} = formData;
-        let aboutUser = formData['about-user'];
-        nameDiv.innerHTML = name + ' ' + surname;
-        emailDiv.innerHTML = email; 
-        aboutDiv.innerHTML = aboutUser;
-        numberDiv.innerHTML = mobile;
-    }
-    let imageData = JSON.parse(localStorage.getItem('imageData'));
-    image.src = imageData;    
 }
 
 displayInput();
@@ -460,9 +450,10 @@ function sendRequest(){
         blob = new Blob([base64toBlob], { type: 'image/jpeg' });
     }
 
-    formatData(formsEdu);
-    formatData(formsExp);
+    formatData(formsEdu, educations);
+    formatData(formsExp, experiences);
     formatPrivate(formPrivate);
+    console.log(formPrivate['image']);
 
     const dataToSend = {
         "name": formPrivate.name,
@@ -474,5 +465,6 @@ function sendRequest(){
         "image": formPrivate.image,
         "about_me": formPrivate.about_me
     }
-    sendData(dataToSend);
+    console.log(JSON.stringify(dataToSend));
+    // sendData(dataToSend);
 }
