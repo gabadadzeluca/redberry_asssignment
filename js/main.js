@@ -4,10 +4,10 @@ import {getDegrees} from "./degrees.js";
 import {
     hideError, showError, 
     checkDateValidity, checkSelect, checkTextValidity, checkEmailValidity,
-    checkTextarea, checkNumberValidity, displayUserInfo
+    checkTextarea, checkNumberValidity, displayUserInfo, displayFinalResume, saveNumber
 } from "./functional.js";
 import { displayInput } from "./resume.js";
-import { formatPrivate, sendData, formatData, base64toBlob } from "./requests.js";
+import { formatPrivate, sendData, formatData} from "./requests.js";
 
 
 const degreesList = await getDegrees();
@@ -19,8 +19,10 @@ const formExperienceDiv = document.querySelector('.form-experience');
 const formEducationDiv = document.querySelector('.form-education');
 const resumeContainer = document.querySelector('.resume-active');
 
+const finishBtn = document.querySelector('.finish-btn');
 
 function displayCurrentForm(currentForm){
+
     if(currentForm == 1){
         prevBtn.style.display = 'none';
         formPrivateDiv.style.display = 'flex';
@@ -29,6 +31,7 @@ function displayCurrentForm(currentForm){
         nextBtn.style.position = 'absolute';
         nextBtn.style.left = '90%';
         hideResume();
+        finishBtn.style.display = 'none';
     }else if(currentForm == 2){
         displayResume();
         prevBtn.style.display = 'block'
@@ -41,6 +44,8 @@ function displayCurrentForm(currentForm){
         formPrivateDiv.style.display = 'none';
         formExperienceDiv.style.display = 'none';
         formEducationDiv.style.display = 'flex';
+        finishBtn.style.display = 'block';
+        nextBtn.style.display = 'none';
     }
 }
 const allInputs = document.querySelectorAll('input');
@@ -65,6 +70,7 @@ function saveForm(form){
     for (const [key, value] of formData.entries()) {
         if(key !== 'user-image'){
             data[key] = value;
+            if(key == 'mobile')data[key] = saveNumber(value);
         }
     }
     const textarea = form.querySelector('textarea');
@@ -298,11 +304,9 @@ function displayDegrees(){
 const prevBtn = document.querySelector('.previous-btn');
 const nextBtn = document.querySelector('.next-btn');
 
-// prevBtn.addEventListener('click', prevForm);
-// nextBtn.addEventListener('click', nextForm);
 
 function nextForm(){
-    if(currentForm == 3) return;
+    if(currentForm == 3) displayFinalResume();
     currentForm++;
     console.log(currentForm);
     displayCurrentForm(currentForm);
@@ -408,7 +412,6 @@ function createFormHTML(object){
         element.value = data[element.name];
         element.id = `${element.id}${count}`;
         if(element.name.includes('degree')){
-            console.log(data[element.name]);
             const id = data[element.name];
             const selectInput = element.querySelector(`option[id="${id}"]`);
             element.value = selectInput.value;
@@ -433,7 +436,6 @@ function hideResume(){
 
 displayInput();
 
-const finishBtn = document.querySelector('.finish-btn');
 finishBtn.addEventListener('click', sendRequest);
 
 
@@ -445,26 +447,21 @@ function sendRequest(){
     let educations = [];
 
 
-    let blob;
-    if(localStorage.getItem('imageData')){
-        blob = new Blob([base64toBlob], { type: 'image/jpeg' });
-    }
 
     formatData(formsEdu, educations);
     formatData(formsExp, experiences);
     formatPrivate(formPrivate);
-    console.log(formPrivate['image']);
 
-    const dataToSend = {
-        "name": formPrivate.name,
-        "surname": formPrivate.surname,
-        "email": formPrivate.email,
-        "phone_number": formPrivate.phone_number,
-        "experiences": experiences,
-        "educations": educations,
-        "image": formPrivate.image,
-        "about_me": formPrivate.about_me
-    }
-    console.log(JSON.stringify(dataToSend));
-    // sendData(dataToSend);
+    const formData = new FormData();
+    formData.append('name', formPrivate.name);
+    formData.append('surname', formPrivate.surname);
+    formData.append('email', formPrivate.email);
+    formData.append("phone_number", formPrivate.phone_number);
+    formData.append('experiences', JSON.stringify(experiences));
+    formData.append('educations', JSON.stringify(educations));
+    formData.append('image', formPrivate.image);
+    formData.append('about_me', formPrivate.about_me);
+
+    console.log([...formData.entries()]);    
+    sendData(formData);
 }
