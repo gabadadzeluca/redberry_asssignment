@@ -15,19 +15,19 @@ export function base64toBlob(){
 const blob = new Blob([base64toBlob], { type: 'image/jpeg' });
 
 
-export function formatData(formsArray){
+export function formatData(formsArray,finalArray){
     for (let i = 0; i < formsArray.length; i++) {
         const original = formsArray[i];
         const data = original.data;
         const keys = Object.keys(data);
         for (let j = 0; j < keys.length; j++) {
             let key = keys[j];
-            if(formsArray == formsEdu){
+            if(formsArray[0].formName == 'formEdu'){
                 if(key.includes('institution'))data['insitute'] = data[key]; 
                 else if(key.includes('grad-date')) data['due-date'] = data[key];
                 else if(key.includes('grad-describtion')) data['description'] = data[key];
                 else if(key.includes('degree')) data['degree_id'] = data[key];
-            }else if(formsArray == formsExp){
+            }else if(formsArray[0].formName == 'formExp'){
                 if(key == 'position') continue; 
                 else if(key == 'employer') continue;
                 else if(key.includes('position')) data['position'] = data[key];
@@ -37,11 +37,7 @@ export function formatData(formsArray){
             }
             delete data[key];
         }
-        if(formsArray == formsEdu){
-            educations.push(data);
-        }else if(formsArray == formsExp){
-            experiences.push(data);
-        }
+        finalArray.push(data);
     }
 }
 
