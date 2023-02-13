@@ -5,6 +5,22 @@
 :root {
   --off-black: #1A1A1A;
   --medium: 500;
+  --thin: 400;
+  --bold: 700;
+  --blue: #0E80BF;
+  --purple: #6B40E3;
+  --light-gray: #F9F9F9;
+  --light-gray-text: #909090;
+  --gray-border: #BCBCBC;
+  --black:#000000;
+  --red:#EF5050;
+  --green:#98E37E;
+}
+
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
 }
 
 html {
@@ -18,24 +34,35 @@ body {
   align-items: center;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  background-color: var(--light-gray);
 }
 body * {
+  box-sizing: border-box;
   background-repeat: no-repeat;
-  background-position: center;
   font-weight: var(--medium);
 }
 
 button {
   color: white;
   padding: 1.8rem 6rem;
-  font-size: 2rem;
+  font-size: 1.4rem;
   border-radius: 0.4rem;
   font-family: "Helvetica Neue", sans-serif;
+  border: none;
 }
 
 button:hover {
   cursor: pointer;
+}
+
+.heading {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  border-bottom: 0.1rem solid var(--off-black);
+  font-size: 2rem;
 }
 
 .starting-screen {
@@ -46,11 +73,7 @@ button:hover {
   width: 100vw;
   height: 100vh;
   background-size: cover;
-}
-.starting-screen .heading {
-  display: inline-flex;
-  width: 90%;
-  border-bottom: 0.1rem solid var(--off-black);
+  background-position: center;
 }
 .starting-screen .logo {
   padding: 2.5rem 0;
@@ -74,7 +97,250 @@ button:hover {
 }
 .starting-screen button {
   width: 100%;
+  font-size: 2rem;
   background-color: var(--off-black);
   font-family: "Helvetica Neue", sans-serif;
   border-radius: 0.8rem;
+}
+
+.wrapper {
+  justify-content: space-between;
+}
+
+.reset-btn {
+  margin-right: 2rem;
+  margin-top: 1rem;
+  width: 4rem;
+  height: 4rem;
+  background-color: white;
+  border-radius: 50%;
+  background-image: url("../assets/images/arrow-left.png");
+  background-position: center;
+}
+
+.left-side-container {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--light-gray);
+  color: var(--black);
+}
+.left-side-container form {
+  margin-top: 5rem;
+}
+.left-side-container h2 {
+  font-weight: var(--bold);
+  font-size: 2.4rem;
+  margin-top: 1rem;
+}
+.left-side-container .form-container {
+  width: 90%;
+  height: 90%;
+  display: flex;
+  justify-content: center;
+}
+.left-side-container label[for=user-image] {
+  font-weight: var(--thin);
+  padding: 0.4rem 1.9rem;
+  cursor: pointer;
+  display: inline-block;
+  background-color: var(--blue);
+  color: #fff;
+  border-radius: 0.4rem;
+  border: none;
+}
+.left-side-container label {
+  font-size: 1.6rem;
+  font-weight: var(--bold);
+}
+.left-side-container input, .left-side-container textarea, .left-side-container select {
+  border: 0.1rem solid var(--gray-border);
+  border-radius: 0.4rem;
+  padding: 1.3rem 1.6rem;
+  margin-top: 0.8rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.left-side-container textarea {
+  resize: none;
+  min-height: 10rem;
+}
+.left-side-container input:focus, .left-side-container textarea:focus, .left-side-container select:focus {
+  outline: none;
+}
+.left-side-container .invalid {
+  border: 0.1rem solid var(--red);
+  background-image: url("../assets/images/invalid.png");
+  background-position: 95%;
+}
+.left-side-container .valid {
+  border: 0.1rem solid var(--green);
+  background-image: url("../assets/images/checkmark.png");
+  background-position: 95%;
+}
+.left-side-container .nav-buttons-div {
+  position: relative;
+  width: 90%;
+  display: inline-flex;
+  justify-content: space-between;
+}
+.left-side-container .nav-buttons-div button {
+  font-size: 1.4rem;
+  padding: 1.4rem 3.5rem;
+  background-color: var(--purple);
+}
+.left-side-container .nav-buttons-div .finish-btn {
+  display: none;
+}
+.left-side-container .nav-buttons-div .next-btn {
+  position: absolute;
+  left: 85%;
+}
+.left-side-container .row {
+  margin: 2rem 0;
+}
+.left-side-container .form-private, .left-side-container .form-experience, .left-side-container .form-education {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: 1.6rem;
+}
+.left-side-container .form-private p, .left-side-container .form-experience p, .left-side-container .form-education p {
+  display: none;
+}
+.left-side-container .form-private button, .left-side-container .form-experience button, .left-side-container .form-education button {
+  background-color: var(--blue);
+  width: 28.9rem;
+  font-size: 1.6rem;
+  height: 4.8rem;
+  padding: 1rem;
+}
+.left-side-container .form-private form, .left-side-container .form-experience form, .left-side-container .form-education form {
+  margin-bottom: 5rem;
+}
+.left-side-container .form-private div, .left-side-container .form-experience div, .left-side-container .form-education div {
+  margin-top: 1.5rem;
+}
+.left-side-container .form-private input[type=date].valid, .left-side-container .form-private input[type=date].invalid, .left-side-container .form-experience input[type=date].valid, .left-side-container .form-experience input[type=date].invalid, .left-side-container .form-education input[type=date].valid, .left-side-container .form-education input[type=date].invalid {
+  background-image: none;
+}
+.left-side-container .form-private .inline, .left-side-container .form-experience .inline, .left-side-container .form-education .inline {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+}
+.left-side-container .form-private .inline > div, .left-side-container .form-experience .inline > div, .left-side-container .form-education .inline > div {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+}
+.left-side-container .form-private select option, .left-side-container .form-experience select option, .left-side-container .form-education select option {
+  font-size: 1.6rem;
+  color: var(--off-black);
+}
+.left-side-container .form-private .image-upload-div {
+  display: inline-flex;
+  width: 45%;
+  justify-content: space-between;
+  align-items: center;
+}
+.left-side-container .form-private .image-upload-div div {
+  font-size: 1.8rem;
+  font-weight: var(--bold);
+  position: relative;
+}
+.left-side-container .form-private .image-upload-div p {
+  color: var(--black);
+  position: absolute;
+  left: 50rem;
+  transform: translateY(-75%);
+  font-size: 1.2rem;
+}
+
+.resume-active, .resume-final {
+  position: relative;
+  width: 40%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  font-weight: var(--thin);
+  font-size: 1.6rem;
+  background-color: white;
+}
+.resume-active h2, .resume-active h3, .resume-final h2, .resume-final h3 {
+  font-weight: var(--bold);
+  color: var(--red);
+}
+.resume-active h2, .resume-final h2 {
+  font-size: 3.4rem;
+}
+.resume-active h3, .resume-final h3 {
+  font-size: 1.8rem;
+  padding-top: 2rem;
+}
+.resume-active .email, .resume-final .email {
+  background-image: url("../assets/images/email.png");
+}
+.resume-active .number, .resume-final .number {
+  background-image: url("../assets/images/phone.png");
+}
+.resume-active .number, .resume-active .email, .resume-final .number, .resume-final .email {
+  padding-left: 3rem;
+  background-position: left;
+}
+.resume-active .resume-cont, .resume-final .resume-cont {
+  width: 90%;
+  box-sizing: border-box;
+  padding: 2rem 0 0 8rem;
+}
+.resume-active .resume-cont img, .resume-final .resume-cont img {
+  width: 24.6rem;
+  height: 24.6rem;
+  border-radius: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.resume-active .info-image-div, .resume-final .info-image-div {
+  padding-top: 4rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.resume-active .info-image-div > div, .resume-final .info-image-div > div {
+  width: 60%;
+}
+.resume-active .info-image-div *, .resume-final .info-image-div * {
+  margin-top: 1rem;
+}
+.resume-active .title, .resume-final .title {
+  color: var(--off-black);
+  font-weight: var(--medium);
+}
+.resume-active .date, .resume-final .date {
+  color: var(--light-gray-text);
+  font-style: italic;
+}
+.resume-active .red-logo, .resume-final .red-logo {
+  position: absolute;
+  left: 10%;
+  top: 92%;
+}
+
+.final-screen {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+.final-screen .resume-final {
+  border: 0.02rem solid var(--black);
+}
+.final-screen .reset-btn {
+  display: none;
+  position: absolute;
+  top: 3rem;
+  left: 7rem;
 }/*# sourceMappingURL=style.css.map */
