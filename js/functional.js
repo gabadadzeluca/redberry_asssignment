@@ -18,7 +18,7 @@ function checkTextValidity(input){
             return true;
         }
     }else{
-        if(!patternGeo.test(input.value) || input.value.length < 2){   
+        if(input.value.length < 2){   
             displayInvalidInput(input);
             showError(input);
         }else{
@@ -68,7 +68,7 @@ function isValidDate(dateString) {
 
 function checkTextarea(textarea){
     if(textarea.getAttribute('data-mandatory') == 'true'){
-        if(patternGeo.test(textarea.value) && textarea.value.trim().length > 2){
+        if(textarea.value.trim().length > 2){
             displayValidInput(textarea);
             return true;
         }else{
@@ -112,10 +112,49 @@ function displayValidInput(input){
     input.classList.add('valid')
 }
 
+function displayUserInfo(resumeContainer){
+    const image = resumeContainer.querySelector('img');
+    const nameDiv = resumeContainer.querySelector('.name');
+    const emailDiv = resumeContainer.querySelector('.email');
+    const aboutDiv = resumeContainer.querySelector('.about-user');
+    const numberDiv = resumeContainer.querySelector('.number');
+    const formData = JSON.parse(localStorage.getItem('formPrivate'));
+    if(formData){
+        let {name, surname, email, mobile} = formData;
+        let aboutUser = formData['about-user'];
+        nameDiv.innerHTML = name + ' ' + surname;
+        emailDiv.innerHTML = email; 
+        aboutDiv.innerHTML = aboutUser;
+        numberDiv.innerHTML = mobile;
+    }
+    let imageData = JSON.parse(localStorage.getItem('imageData'));
+    image.src = imageData;    
+}
+function displayFinalResume(){
+    const finalScreen = document.querySelector('.final-screen');
+    const resume = document.querySelector('.resume-active');
+    const leftCont = document.querySelector('.left-side-container');
+    
+    const resetBtn = finalScreen.querySelector('.reset-btn');
+    
+    resetBtn.style.display = 'block';
+    leftCont.style.display = 'none';
+    resume.style.display = 'none';
+    const resumeCopy = resume.cloneNode(true);
+    resumeCopy.classList.remove('resume-active');
+    resumeCopy.classList.add('resume-final');
+    resumeCopy.style.display = 'flex';
+
+    finalScreen.style.display = 'flex';
+    finalScreen.appendChild(resumeCopy);
+
+    // reset local storage
+    localStorage.clear();
+}
 
 
 export {
-    displayInvalidInput, displayValidInput, hideError, showError, 
+    hideError, showError, 
     checkDateValidity, checkSelect, checkTextValidity, checkEmailValidity,
-    checkTextarea, checkNumberValidity, patternEmail, patternGeo, patternNumber, patternGeoName
+    checkTextarea, checkNumberValidity,displayUserInfo, displayFinalResume,
 }
