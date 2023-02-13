@@ -151,10 +151,14 @@ function displayFinalResume(){
     // reset local storage
     localStorage.clear();
 }
-
+function saveNumber(number){
+    if(number[0] !== '+') number = `+995${number}`;
+    return number;
+}
 
 export {
     hideError, showError, 
     checkDateValidity, checkSelect, checkTextValidity, checkEmailValidity,
-    checkTextarea, checkNumberValidity,displayUserInfo, displayFinalResume,
+    checkTextarea, checkNumberValidity,displayUserInfo, displayFinalResume, 
+    saveNumber,
 }
