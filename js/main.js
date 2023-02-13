@@ -10,7 +10,6 @@ import { displayInput } from "./resume.js";
 import { formatPrivate, sendData, formatData} from "./requests.js";
 
 
-const degreesList = await getDegrees();
 let currentForm = 1;
 
 const formPrivateDiv = document.querySelector('.form-private');
@@ -264,6 +263,7 @@ function checkAllInputs(inputFields){
     if(textarea) checkTextarea(textarea);
 }
 //add options to a select element
+const degreesList = await getDegrees();
 displayDegrees();
 
 function addErrorText(input, text){
