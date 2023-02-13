@@ -2,17 +2,18 @@
 
 const url = 'https://resume.redberryinternship.ge/api/cvs';
 
-const formsExp = JSON.parse(localStorage.getItem('formsExp'));
-const formsEdu = JSON.parse(localStorage.getItem('formsEdu'));
-const formPrivate = JSON.parse(localStorage.getItem('formPrivate'));
-
-
-export function base64toBlob(){
+function b64toBlob(){
     const base64EncodedString = JSON.parse(localStorage.getItem('imageData')).split(',')[1];
-    let binaryData = atob(base64EncodedString);
-    return binaryData;
-}
+    let byteCharacters = atob(base64EncodedString);
 
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], {type: 'image/jpeg'});
+    return blob;
+}
 
 export function formatData(formsArray,finalArray){
     for (let i = 0; i < formsArray.length; i++) {
@@ -42,43 +43,27 @@ export function formatData(formsArray,finalArray){
 }
 
 export function formatPrivate(formPrivate){
-    const blob = new Blob([base64toBlob], { type: 'image/jpeg' });
+    const blob = b64toBlob();
     formPrivate['phone_number'] = formPrivate['mobile'];
     delete formPrivate['mobile'];
     formPrivate['about_me'] = formPrivate['about-user'];
     delete formPrivate['about-user'];
     formPrivate['image'] = blob;
-    console.log(formPrivate['image']);
 }
-
-
-// const dataToSend = {
-//     "name": formPrivate.name,
-//     "surname": formPrivate.surname,
-//     "email": formPrivate.email,
-//     "phone_number": formPrivate.phone_number,
-//     "experiences": experiences,
-//     "educations": educations,
-//     "image": formPrivate.image,
-//     "about_me": formPrivate.about_me
-// }
 
 export function sendData(data){
     fetch(url,{
         method:'POST',
         headers: {
-            'content-type':'application/json'
+            'Content-Type':'multipart/form-data'
         },
-        body: JSON.stringify(data)
+        body: data,
     })
     .then(response=>{
-        if(response.ok){
+        if(response){
             console.log(response);
             console.log("response status:",response.statusText);
         }
     })
     .catch(error=>console.log(error))
 }
-
-
-

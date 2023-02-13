@@ -33,6 +33,7 @@ function checkEmailValidity(input){
     if(!patternEmail.test(input.value)){
         displayInvalidInput(input);
         showError(input);
+        return false
     }else{
         displayValidInput(input);
         hideError(input);
@@ -44,6 +45,7 @@ function checkNumberValidity(input){
     if(!patternNumber.test(input.value.trim())){
         displayInvalidInput(input);
         showError(input);
+        return false;
     }else{
         displayValidInput(input);
         hideError(input);

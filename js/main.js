@@ -20,6 +20,9 @@ const formEducationDiv = document.querySelector('.form-education');
 const resumeContainer = document.querySelector('.resume-active');
 
 const finishBtn = document.querySelector('.finish-btn');
+const prevBtn = document.querySelector('.previous-btn');
+const nextBtn = document.querySelector('.next-btn');
+
 
 function displayCurrentForm(currentForm){
 
@@ -28,8 +31,6 @@ function displayCurrentForm(currentForm){
         formPrivateDiv.style.display = 'flex';
         formExperienceDiv.style.display = 'none';
         formEducationDiv.style.display = 'none';
-        nextBtn.style.position = 'absolute';
-        nextBtn.style.left = '90%';
         hideResume();
         finishBtn.style.display = 'none';
     }else if(currentForm == 2){
@@ -40,6 +41,8 @@ function displayCurrentForm(currentForm){
         formPrivateDiv.style.display = 'none';
         formExperienceDiv.style.display = 'flex';
         formEducationDiv.style.display = 'none';
+        finishBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
     }else if(currentForm == 3){
         formPrivateDiv.style.display = 'none';
         formExperienceDiv.style.display = 'none';
@@ -53,6 +56,12 @@ const formPrivate = formPrivateDiv.querySelector('form');
 const formExp = formExperienceDiv.querySelector('form');
 const formEdu = formEducationDiv.querySelector('form');
 
+// add error messages to each input
+allInputs.forEach(input=>{
+    addErrorText(input);
+});
+
+
 [formPrivate, formExp, formEdu].forEach(form=>{
     form.addEventListener('input', ()=>{
         handleForm(form);
@@ -60,6 +69,7 @@ const formEdu = formEducationDiv.querySelector('form');
         displayInput();
     });
 });
+
 if(!localStorage.getItem('formsExp')){localStorage.setItem('formsExp', JSON.stringify([]));}
 if(!localStorage.getItem('formsEdu')){localStorage.setItem('formsEdu', JSON.stringify([]));}
 
@@ -119,10 +129,7 @@ function saveForm(form){
     }
 }
 
-// add error messages to each input
-allInputs.forEach(input=>{
-    addErrorText(input);
-});
+
 
 function handleForm(form){
     const numberInput = form.querySelector('input[type="tel"]');
@@ -151,28 +158,28 @@ function handleForm(form){
         emailValid = checkEmailValidity(emailInput);
         numberValid = checkNumberValidity(numberInput);
     }
-    
-
     let textsValid = (textInputs).every(input=>{
         return checkTextValidity(input);
     });
     let datesValid = (dateInputs).every(input=>{
         return checkDateValidity(input);
     });
+    let imageValid = localStorage.getItem('imageData') !== null;
 
     let validationArray = [];
-    let formIsValid = false;    
+    let formIsValid;    
     if(form.parentElement == formPrivateDiv){
-        validationArray = [textsValid, emailValid, numberValid];
+        validationArray = [textsValid, emailValid, numberValid, imageValid];
     }else if(form.parentElement == formExperienceDiv){
         validationArray = [textsValid, datesValid, textAreaValid];
     }else{ // education div
         validationArray = [textsValid, datesValid, textAreaValid, selectValid];
     }
     formIsValid = validationArray.every(value=>{
+        console.log(form,validationArray, value);
         return value === true;
     });
-    console.log(form.id,"valid:",formIsValid);
+    console.log("valid:",formIsValid);
     if(formIsValid == false){
         nextBtn.removeEventListener('click', nextForm);
         prevBtn.removeEventListener('click', prevForm);
@@ -182,7 +189,6 @@ function handleForm(form){
     }
     
 }
-
 
 displayData(formPrivate);
 if(JSON.parse(localStorage.getItem('formsExp')).length > 0){
@@ -295,20 +301,17 @@ function displayDegrees(){
     let degreeMenu = document.getElementById('degree-menu');
     let options = '<option disabled selected value="default">აირჩიეთ ხარისხი</option>';
     degreesList.forEach(obj=>{
-        options +=  `<option value="${obj.title}" id=${obj.id}>${obj.title}</option>`;
+        options +=  `<option style="width:30rem"value="${obj.title}" id=${obj.id}>${obj.title}</option>`;
     });
     degreeMenu.innerHTML = options;
 }
 
 
-const prevBtn = document.querySelector('.previous-btn');
-const nextBtn = document.querySelector('.next-btn');
 
 
 function nextForm(){
-    if(currentForm == 3) displayFinalResume();
+    if(currentForm == 3) return;
     currentForm++;
-    console.log(currentForm);
     displayCurrentForm(currentForm);
 }
 
@@ -436,7 +439,10 @@ function hideResume(){
 
 displayInput();
 
-finishBtn.addEventListener('click', sendRequest);
+finishBtn.addEventListener('click', ()=>{
+    sendRequest();
+    displayFinalResume();
+});
 
 
 function sendRequest(){
