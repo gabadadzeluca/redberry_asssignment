@@ -12,7 +12,6 @@ export function base64toBlob(){
     let binaryData = atob(base64EncodedString);
     return binaryData;
 }
-const blob = new Blob([base64toBlob], { type: 'image/jpeg' });
 
 
 export function formatData(formsArray,finalArray){
@@ -23,8 +22,8 @@ export function formatData(formsArray,finalArray){
         for (let j = 0; j < keys.length; j++) {
             let key = keys[j];
             if(formsArray[0].formName == 'formEdu'){
-                if(key.includes('institution'))data['insitute'] = data[key]; 
-                else if(key.includes('grad-date')) data['due-date'] = data[key];
+                if(key.includes('institution'))data['institute'] = data[key]; 
+                else if(key.includes('grad-date')) data['due_date'] = data[key];
                 else if(key.includes('grad-describtion')) data['description'] = data[key];
                 else if(key.includes('degree')) data['degree_id'] = data[key];
             }else if(formsArray[0].formName == 'formExp'){
@@ -33,6 +32,7 @@ export function formatData(formsArray,finalArray){
                 else if(key.includes('position')) data['position'] = data[key];
                 else if(key.includes('employer')) data['employer'] = data[key];
                 else if(key.includes('start-date')) data['start_date'] = data[key];
+                else if(key.includes('end-date')) data['due_date'] = data[key];
                 else if(key.includes('describtion')) data['description'] = data[key];
             }
             delete data[key];
@@ -42,12 +42,13 @@ export function formatData(formsArray,finalArray){
 }
 
 export function formatPrivate(formPrivate){
-
+    const blob = new Blob([base64toBlob], { type: 'image/jpeg' });
     formPrivate['phone_number'] = formPrivate['mobile'];
     delete formPrivate['mobile'];
     formPrivate['about_me'] = formPrivate['about-user'];
     delete formPrivate['about-user'];
     formPrivate['image'] = blob;
+    console.log(formPrivate['image']);
 }
 
 
