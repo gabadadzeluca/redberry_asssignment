@@ -7,6 +7,8 @@ import {
     checkTextarea, checkNumberValidity, patternEmail, patternGeo, patternNumber, patternGeoName
 } from "./functional.js";
 import { displayInput } from "./resume.js";
+import { formatPrivate, sendData, formatData, base64toBlob } from "./requests.js";
+
 
 const degreesList = await getDegrees();
 let currentForm = 1;
@@ -15,6 +17,9 @@ const formPrivateDiv = document.querySelector('.form-private');
 
 const formExperienceDiv = document.querySelector('.form-experience');
 const formEducationDiv = document.querySelector('.form-education');
+const resumeContainer = document.querySelector('.resume-active');
+
+
 function displayCurrentForm(currentForm){
     if(currentForm == 1){
         prevBtn.style.display = 'none';
@@ -23,6 +28,7 @@ function displayCurrentForm(currentForm){
         formEducationDiv.style.display = 'none';
         nextBtn.style.position = 'absolute';
         nextBtn.style.left = '90%';
+        hideResume();
     }else if(currentForm == 2){
         displayResume();
         prevBtn.style.display = 'block'
@@ -409,8 +415,11 @@ function createFormHTML(object){
 }
 
 function displayResume(){
-    const resumeContainer = document.querySelector('.resume-active');
+    resumeContainer.style.display = 'flex';
     displayUserInfo(resumeContainer);    
+}
+function hideResume(){
+    resumeContainer.style.display = 'none';
 }
 
 function displayUserInfo(resumeContainer){
@@ -418,18 +427,52 @@ function displayUserInfo(resumeContainer){
     const nameDiv = resumeContainer.querySelector('.name');
     const emailDiv = resumeContainer.querySelector('.email');
     const aboutDiv = resumeContainer.querySelector('.about-user');
-
+    const numberDiv = resumeContainer.querySelector('.number');
     const formData = JSON.parse(localStorage.getItem('formPrivate'));
     if(formData){
-        let {name, surname, email,tel} = formData;
+        let {name, surname, email, mobile} = formData;
         let aboutUser = formData['about-user'];
         nameDiv.innerHTML = name + ' ' + surname;
         emailDiv.innerHTML = email; 
         aboutDiv.innerHTML = aboutUser;
+        numberDiv.innerHTML = mobile;
     }
     let imageData = JSON.parse(localStorage.getItem('imageData'));
     image.src = imageData;    
-
 }
 
 displayInput();
+
+const finishBtn = document.querySelector('.finish-btn');
+finishBtn.addEventListener('click', sendRequest);
+
+
+function sendRequest(){
+    const formsEdu = JSON.parse(localStorage.getItem('formsEdu'));
+    const formsExp = JSON.parse(localStorage.getItem('formsExp'));
+    const formPrivate = JSON.parse(localStorage.getItem('formPrivate'));
+    let experiences = [];
+    let educations = [];
+
+
+    let blob;
+    if(localStorage.getItem('imageData')){
+        blob = new Blob([base64toBlob], { type: 'image/jpeg' });
+    }
+
+    formatData(formsEdu);
+    formatData(formsExp);
+    formatPrivate(formPrivate);
+
+    const dataToSend = {
+        "name": formPrivate.name,
+        "surname": formPrivate.surname,
+        "email": formPrivate.email,
+        "phone_number": formPrivate.phone_number,
+        "experiences": experiences,
+        "educations": educations,
+        "image": formPrivate.image,
+        "about_me": formPrivate.about_me
+    }
+    sendData(dataToSend);
+}

@@ -1,5 +1,4 @@
 "use strict";
-// this code formats data, creates an objcet and sends it as a  post request
 
 const url = 'https://resume.redberryinternship.ge/api/cvs';
 
@@ -8,22 +7,15 @@ const formsEdu = JSON.parse(localStorage.getItem('formsEdu'));
 const formPrivate = JSON.parse(localStorage.getItem('formPrivate'));
 
 
-let binaryData;
-function base64toBlob(){
+export function base64toBlob(){
     const base64EncodedString = JSON.parse(localStorage.getItem('imageData')).split(',')[1];
-    binaryData = atob(base64EncodedString);
+    let binaryData = atob(base64EncodedString);
+    return binaryData;
 }
-base64toBlob();
-
-const blob = new Blob([binaryData], { type: 'image/jpeg' });
+const blob = new Blob([base64toBlob], { type: 'image/jpeg' });
 
 
-let experiences = [];
-let educations = [];
-formatData(formsEdu);
-formatData(formsExp);
-
-function formatData(formsArray){
+export function formatData(formsArray){
     for (let i = 0; i < formsArray.length; i++) {
         const original = formsArray[i];
         const data = original.data;
@@ -53,11 +45,8 @@ function formatData(formsArray){
     }
 }
 
-formatPrivate(formPrivate);
+export function formatPrivate(formPrivate){
 
-function formatPrivate(formPrivate){
-    const imageData = JSON.parse(localStorage.getItem('imageData'));
-    const base64Image = imageData.split(',')[1];
     formPrivate['phone_number'] = formPrivate['mobile'];
     delete formPrivate['mobile'];
     formPrivate['about_me'] = formPrivate['about-user'];
@@ -66,25 +55,24 @@ function formatPrivate(formPrivate){
 }
 
 
-export const dataToSend = {
-    "name": formPrivate.name,
-    "surname": formPrivate.surname,
-    "email": formPrivate.email,
-    "phone_number": formPrivate.phone_number,
-    "experiences": experiences,
-    "educations": educations,
-    "image": formPrivate.image,
-    "about_me": formPrivate.about_me
-}
+// const dataToSend = {
+//     "name": formPrivate.name,
+//     "surname": formPrivate.surname,
+//     "email": formPrivate.email,
+//     "phone_number": formPrivate.phone_number,
+//     "experiences": experiences,
+//     "educations": educations,
+//     "image": formPrivate.image,
+//     "about_me": formPrivate.about_me
+// }
 
-
-export function sendData(){
+export function sendData(data){
     fetch(url,{
         method:'POST',
         headers: {
             'content-type':'application/json'
         },
-        body: JSON.stringify(dataToSend)
+        body: JSON.stringify(data)
     })
     .then(response=>{
         if(response.ok){
